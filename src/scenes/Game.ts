@@ -5,6 +5,7 @@ import { Player } from '../entities/Player'
 import { Line } from '../entities/Line'
 import {
   ENEMY_KILL_SPEED_BOOST,
+  MULTI_SPEED_BOOST,
   PARTICLE_CONFIG,
   PLAYER_MIN_CRUSH_SPEED,
 } from '../constants'
@@ -86,7 +87,9 @@ export class Game extends Scene {
 
   onHitEnemy = (enemy: Enemy) => {
     enemy.kill()
-    this.player.addImpulse(ENEMY_KILL_SPEED_BOOST)
+    this.player.addImpulse(
+      ENEMY_KILL_SPEED_BOOST + MULTI_SPEED_BOOST * this.state.get().multi,
+    )
     this.state.patch((s) => ({
       score: s.score + (s.multi + 1),
       multi: s.multi + 1,
