@@ -1,0 +1,21 @@
+{
+  "name": "gameoff-2025",
+  "description": "A Phaser 3 TypeScript template using Vite.",
+  "version": "0.0.0",
+  "author": "Daniel Whiffing <danielwhiffing@gmail.com> (https://directive.software/)",
+  "homepage": "https://github.com/dwhiffing/gameoff-2025",
+  "scripts": {
+    "dev": "vite --config vite/config.dev.mjs",
+    "build": "vite build --config vite/config.prod.mjs"
+  },
+  "devDependencies": {
+    "terser": "^5.39.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.3.1"
+  },
+  "dependencies": {
+    "phaser": "^3.88.2",
+    "phaser-hooks": "^0.7.0"
+  },
+  "packageManager": "pnpm@9.15.0+sha1.8bfdb6d72b4d5fdf87d21d27f2bfbe2b21dd2629"
+}
