@@ -68,6 +68,7 @@ export class Game extends Scene {
 
   onRelease = () => {
     this.line.clear()
+    this.state.patch({ multi: 0 })
     this.player.launch(this.input.activePointer)
     this.setTimeScale(1)
   }
