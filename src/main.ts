@@ -14,7 +14,7 @@ const config: Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  physics: { default: 'arcade', arcade: { debug: false } },
+  physics: { default: 'arcade', arcade: { fps: 360, debug: false } },
   scene: [BootScene, MenuScene, GameScene],
 }
 

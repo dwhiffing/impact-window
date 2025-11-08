@@ -10,7 +10,14 @@ export class Boot extends Scene {
     this.load.on('progress', (p: number) => (bar.width = 64 * p))
   }
 
-  preload() {}
+  preload() {
+    this.add
+      .graphics()
+      .fillStyle(0xffffff, 1)
+      .fillRect(0, 0, 4, 4)
+      .generateTexture('particle', 4, 4)
+      .destroy()
+  }
 
   create() {
     this.scene.start('Game')
