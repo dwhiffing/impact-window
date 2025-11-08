@@ -9,6 +9,7 @@ export class Game extends Scene {
   private player!: Player
   private enemies!: Phaser.Physics.Arcade.Group
   private line: Line
+  private particles!: Phaser.GameObjects.Particles.ParticleEmitter
   public state: HookState<IState>
 
   constructor() {
@@ -21,6 +22,22 @@ export class Game extends Scene {
 
     this.player = new Player(this)
     this.enemies = this.physics.add.group({ classType: Enemy })
+
+    this.add
+      .graphics()
+      .fillStyle(0xffffff, 1)
+      .fillRect(0, 0, 4, 4)
+      .generateTexture('particle', 4, 4)
+      .destroy()
+
+    this.particles = this.add.particles(0, 0, 'particle', {
+      lifespan: { min: 100, max: 1200 },
+      scale: { min: 0.2, max: 1.5 },
+      speed: { min: 50, max: 100 },
+      alpha: { start: 1, end: 0 },
+      rotate: { start: 0, end: 1200 },
+      quantity: 0,
+    })
 
     this.state = withGlobalState<IState>(this, 'global')
     this.state.set({ score: 0, multi: 0 })
@@ -46,6 +63,9 @@ export class Game extends Scene {
 
       if (player.getSpeed() > player.speedThreshold) {
         enemy.setActive(false).setAlpha(0)
+        this.particles
+          .setParticleTint(0xff4444)
+          .emitParticleAt(enemy.x, enemy.y, 15)
         player.addImpulse(100)
         this.state.patch((s) => ({
           score: s.score + (s.multi + 1),
@@ -53,6 +73,10 @@ export class Game extends Scene {
         }))
       } else {
         player.setActive(false).setAlpha(0)
+        this.particles
+          .setParticleTint(0x00ffcc)
+          .emitParticleAt(player.x, player.y, 50)
+        this.cameras.main.flash(50, 255, 255, 255)
         this.cameras.main
           .shake(300, 0.01)
           .fade(800, 0, 0, 0, true, (_: any, p: number) => {
