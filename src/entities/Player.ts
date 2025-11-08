@@ -62,8 +62,7 @@ export class Player extends Phaser.GameObjects.Arc {
     const dy = -(p.y - p.downY)
 
     const angle = Math.atan2(dy, dx)
-    const distance = Math.sqrt(dx * dx + dy * dy)
-    const speed = Math.min(distance * PLAYER_SPEED_MULTI, PLAYER_MAX_SPEED)
+    const speed = Math.min(PLAYER_SPEED_MULTI, PLAYER_MAX_SPEED)
     const vx = Math.cos(angle) * speed
     const vy = Math.sin(angle) * speed
     this.body.setVelocity(vx, vy)

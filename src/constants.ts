@@ -13,7 +13,7 @@ export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
 export const PLAYER_DRAG = 0.1
 export const PLAYER_SIZE = 13
-export const PLAYER_SPEED_MULTI = 6
+export const PLAYER_SPEED_MULTI = 500
 
 export const ENEMY_SIZE = 10
 export const ENEMY_COLOR = 0xff4444
