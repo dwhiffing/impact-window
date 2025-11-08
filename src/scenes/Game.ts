@@ -8,6 +8,7 @@ import {
   MULTI_SPEED_BOOST,
   PARTICLE_CONFIG,
   PLAYER_MIN_CRUSH_SPEED,
+  TRAIL_CONFIG,
 } from '../constants'
 
 type IState = {
@@ -16,10 +17,12 @@ type IState = {
 }
 
 export class Game extends Scene {
-  private player!: Player
-  private enemies!: Phaser.Physics.Arcade.Group
+  private player: Player
+  private enemies: Phaser.Physics.Arcade.Group
   private line: Line
-  public particles!: Phaser.GameObjects.Particles.ParticleEmitter
+  public particles: Phaser.GameObjects.Particles.ParticleEmitter
+  public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
+  public renderTexture: Phaser.GameObjects.RenderTexture
   public state: HookState<IState>
 
   constructor() {
@@ -27,13 +30,18 @@ export class Game extends Scene {
   }
 
   create(): void {
-    const { centerX: x, height } = this.cameras.main
+    const { centerX: x, width, height } = this.cameras.main
     this.cameras.main.fadeFrom(800, 0, 0, 0)
 
     this.player = new Player(this)
     this.line = new Line(this)
     this.enemies = this.physics.add.group({ classType: Enemy })
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
+    this.trailParticles = this.add.particles(0, 0, 'circle', TRAIL_CONFIG)
+    this.trailParticles.startFollow(this.player)
+    this.renderTexture = this.add.renderTexture(0, 0, width, height)
+    this.renderTexture.setOrigin(0, 0).setDepth(-2).setAlpha(0.3)
+
     const scoreText = this.add.text(x, height - 12, '0').setOrigin(0.5, 1)
     const multiText = this.add.text(x, height - 30, '').setOrigin(0.5, 1)
 
@@ -60,6 +68,7 @@ export class Game extends Scene {
 
   update = (_time: number, _delta: number): void => {
     this.player.update()
+    this.renderTexture.clear().draw(this.trailParticles, 0, 0)
   }
 
   onDrag = () => {
@@ -115,8 +124,9 @@ export class Game extends Scene {
 
   setTimeScale(scale: number) {
     this.time.timeScale = scale
-    this.physics.world.timeScale = 1 / scale
     this.tweens.timeScale = scale
     this.particles.timeScale = scale
+    this.trailParticles.timeScale = scale
+    this.physics.world.timeScale = 1 / scale
   }
 }

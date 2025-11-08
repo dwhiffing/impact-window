@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser'
 export const PARTICLE_CONFIG = {
   lifespan: { min: 100, max: 1200 },
   scale: { min: 0.2, max: 1.5 },
@@ -7,14 +8,27 @@ export const PARTICLE_CONFIG = {
   quantity: 0,
 }
 
-export const PLAYER_MIN_CRUSH_SPEED = 100
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
-export const PLAYER_DRAG = 0.1
+export const PLAYER_DRAG = 0.2
 export const PLAYER_SIZE = 13
-export const PLAYER_SPEED_MULTI = 500
+export const PLAYER_LAUNCH_SPEED = 400
+export const PLAYER_ACCELERATION = 30
+export const PLAYER_MIN_CRUSH_SPEED = 50
 
 export const ENEMY_SIZE = 10
 export const ENEMY_COLOR = 0xff4444
-export const ENEMY_KILL_SPEED_BOOST = 100
+export const ENEMY_KILL_SPEED_BOOST = 150
+export const MULTI_SPEED_BOOST = 30
+
+export const TRAIL_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig =
+  {
+    lifespan: 600,
+    frequency: 5,
+    alpha: { start: 2, end: 0 },
+    quantity: 1,
+    tint: PLAYER_CRUSH_COLOR,
+    visible: false,
+    active: false,
+  }

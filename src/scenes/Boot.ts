@@ -1,4 +1,5 @@
 import { Scene } from 'phaser'
+import { PLAYER_SIZE } from '../constants'
 
 export class Boot extends Scene {
   constructor() {
@@ -16,6 +17,13 @@ export class Boot extends Scene {
       .fillStyle(0xffffff, 1)
       .fillRect(0, 0, 4, 4)
       .generateTexture('particle', 4, 4)
+      .destroy()
+    const r = PLAYER_SIZE * 3
+    this.add
+      .graphics()
+      .fillStyle(0xffffff, 1)
+      .fillCircle(r, r, r)
+      .generateTexture('circle', r * 2, r * 2)
       .destroy()
   }
 
