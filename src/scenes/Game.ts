@@ -4,6 +4,7 @@ import { Enemy } from '../entities/Enemy'
 import { Player } from '../entities/Player'
 import { Line } from '../entities/Line'
 import { Hud } from '../entities/Hud'
+import { Powerup } from '../entities/Powerup'
 import { IState } from '../types'
 import {
   DEAD_ZONE_SIZE,
@@ -16,6 +17,7 @@ import {
   WEAK_LAUNCH_COST,
   FULL_LAUNCH_COST,
   SPAWN_RATE,
+  POWERUPS,
 } from '../constants'
 
 export class Game extends Scene {
@@ -24,6 +26,7 @@ export class Game extends Scene {
   public line: Line
   public hud: Hud
   public particles: Phaser.GameObjects.Particles.ParticleEmitter
+  public powerup?: Powerup
   public state: HookState<IState>
 
   constructor() {
@@ -39,6 +42,7 @@ export class Game extends Scene {
     this.player = new Player(this)
     this.line = new Line(this)
     this.enemies = this.physics.add.group({ classType: Enemy })
+    this.powerup = new Powerup(this)
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
     this.hud = new Hud(this)
 
@@ -47,13 +51,31 @@ export class Game extends Scene {
     this.input.on('gameout', this.onRelease)
     this.physics.world.on('worldbounds', this.onWorldBounds)
     this.physics.add.collider(this.player, this.enemies, undefined, this.onCollide) // prettier-ignore
+    this.physics.add.overlap(this.player, this.powerup, this.player.onPickupPowerup) // prettier-ignore
+    this.time.addEvent({ delay: SPAWN_RATE, loop: true, callback: this.spawnEnemy }) // prettier-ignore
+    this.time.addEvent({ delay: 5000, loop: true, callback: this.spawnPowerup }) // prettier-ignore
 
-    this.time.addEvent({
-      delay: SPAWN_RATE,
-      loop: true,
-      callback: this.spawnEnemy,
-    })
     this.spawnEnemy()
+  }
+
+  spawnPowerup = () => {
+    if (!this.powerup || this.powerup.active) return
+
+    const total = POWERUPS.reduce((s, p) => s + p.rarity, 0)
+    let pick = Phaser.Math.Between(0, total - 1)
+    let chosen = POWERUPS[0]
+    for (const p of POWERUPS) {
+      if (pick < p.rarity) {
+        chosen = p
+        break
+      }
+      pick -= p.rarity
+    }
+
+    const d = 40
+    const x = Phaser.Math.Between(d, this.cameras.main.width - d)
+    const y = Phaser.Math.Between(d, this.cameras.main.height - d)
+    this.powerup.spawnAt(x, y, chosen)
   }
 
   spawnEnemy = () =>

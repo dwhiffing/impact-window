@@ -14,6 +14,8 @@ import {
 } from '../constants'
 import { darkenColor } from '../darkenColor'
 import { Game } from '../scenes/Game'
+import { PowerupDef } from '../types'
+import { Powerup } from './Powerup'
 
 export class Player extends Phaser.GameObjects.Container {
   declare body: Phaser.Physics.Arcade.Body
@@ -25,6 +27,7 @@ export class Player extends Phaser.GameObjects.Container {
   private cooldownArc: Phaser.GameObjects.Graphics
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
+  private activePowerup?: { def: PowerupDef; until: number }
 
   constructor(scene: Game) {
     super(scene)
@@ -63,6 +66,22 @@ export class Player extends Phaser.GameObjects.Container {
     this.updateCooldownTimer()
     this.applyImpulse()
     this.updateTrail()
+  }
+
+  onPickupPowerup = (_p: any, pu: any) => {
+    const power = pu as Powerup
+
+    if (!power.active) return
+    const def = power.def
+    power.pickup()
+    this.activePowerup = { def, until: this.scene.time.now + def.duration }
+    // TODO: add powerup effects
+
+    this.scene.time.delayedCall(def.duration, () => {
+      if (this.activePowerup?.def === def) {
+        this.activePowerup = undefined
+      }
+    })
   }
 
   updateCooldownTimer = () => {

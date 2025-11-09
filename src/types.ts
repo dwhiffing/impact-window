@@ -4,7 +4,13 @@ export type IState = {
   energy: number
 }
 
-export type EnemyType = 'grunt' | 'heavy'
+export type PowerupDef = {
+  name: string
+  color: number
+  duration: number
+  rarity: number
+}
+
 
 export type EnemyStats = {
   color: number

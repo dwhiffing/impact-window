@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser'
-import { EnemyType, EnemyStats } from './types'
+import { EnemyType, EnemyStats, PowerupDef } from './types'
 
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
@@ -24,6 +24,27 @@ export const MAX_ENERGY = 100
 export const ENERGY_RECHARGE_RATE = 12
 export const WEAK_LAUNCH_COST = 12
 export const FULL_LAUNCH_COST = 40
+
+export const POWERUPS: PowerupDef[] = [
+  {
+    name: 'damage',
+    color: 0x66ccff,
+    duration: 6000,
+    rarity: 10,
+  },
+  {
+    name: 'speed',
+    color: 0xffcc33,
+    duration: 5000,
+    rarity: 7,
+  },
+  {
+    name: 'energize',
+    color: 0x99ff66,
+    duration: 4000,
+    rarity: 12,
+  },
+]
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   grunt: {
