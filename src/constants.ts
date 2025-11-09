@@ -57,6 +57,16 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     score: 100,
     damage: 0,
   },
+  boss: {
+    color: 0xff44ff,
+    speed: 20,
+    size: 16,
+    health: 6,
+    energyOnKill: 12,
+    speedBoost: 200,
+    score: 100,
+    damage: 1,
+  },
   grunt: {
     color: 0xff4444,
     speed: 60,

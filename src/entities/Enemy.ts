@@ -151,6 +151,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       const iy = Math.sin(eRad) * r2
 
       this.healthGraphics
+        .clear()
         .moveTo(ox, oy)
         .arc(0, 0, r, sRad, eRad, false)
         .lineTo(ix, iy)

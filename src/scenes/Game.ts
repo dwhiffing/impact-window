@@ -77,7 +77,15 @@ export class Game extends Scene {
   spawnEnemy = () =>
     this.enemies
       .get()
-      .spawn(Phaser.Math.Between(0, 3) === 0 ? 'heavy' : 'grunt')
+      .spawn(
+        Phaser.Math.Between(0, 3) === 0
+          ? 'boss'
+          : Phaser.Math.Between(0, 3) === 0
+          ? 'fast'
+          : Phaser.Math.Between(0, 3) === 0
+          ? 'heavy'
+          : 'grunt',
+      )
 
   update = (_time: number, _delta: number): void => {
     const dt = _delta / 1000
