@@ -20,13 +20,13 @@ export class Enemy extends Phaser.GameObjects.Container {
     scene.physics.add.existing(this)
     scene.add.existing(this)
 
-    this.base = scene.add.arc(0, 0).setDepth(9)
+    this.base = scene.add.arc(0, 0).setDepth(1)
     this.indicator = scene.add.arc(0, 0).setAlpha(0)
     for (let i = 0; i < 3; i++) {
-      this.healthBar.push(scene.add.arc(0, 0).setDepth(10))
+      this.healthBar.push(scene.add.arc(0, 0).setDepth(2))
     }
     this.add([this.base, ...this.healthBar])
-    this.setVisible(false).setDepth(8)
+    this.setVisible(false).setDepth(2)
   }
 
   spawn(spawnType: EnemyType) {

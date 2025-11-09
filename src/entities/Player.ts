@@ -30,12 +30,12 @@ export class Player extends Phaser.GameObjects.Container {
     super(scene)
 
     const { centerX, centerY, width, height } = scene.cameras.main
-    this.setPosition(centerX, centerY)
+    this.setPosition(centerX, centerY).setDepth(3)
     this.base = scene.add
       .arc(0, 0, PLAYER_SIZE, 0, 360, true, PLAYER_COLOR)
-      .setDepth(9)
+      .setDepth(1)
 
-    this.cooldownArc = scene.add.graphics().setDepth(10)
+    this.cooldownArc = scene.add.graphics().setDepth(2)
     this.add([this.base, this.cooldownArc])
 
     scene.add.existing(this)
@@ -55,7 +55,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.trailParticles = this.scene.add.particles(0, 0, 'circle', TRAIL_CONFIG)
     this.trailParticles.startFollow(this)
     this.renderTexture = this.scene.add.renderTexture(0, 0, width, height)
-    this.renderTexture.setOrigin(0, 0).setDepth(-2).setAlpha(0.3)
+    this.renderTexture.setOrigin(0, 0).setDepth(-1).setAlpha(0.3)
   }
 
   update() {

@@ -13,10 +13,12 @@ export class Hud {
       .bitmapText(x, height - 5, 'pixel-dan', '0')
       .setOrigin(0.5, 1)
       .setFontSize(10)
+      .setDepth(9)
     const multiText = this.scene.add
       .bitmapText(x, height - 23, 'pixel-dan', '')
       .setOrigin(0.5, 1)
       .setFontSize(5)
+      .setDepth(9)
 
     this.scene.add
       .rectangle(0, height, width, 3, 0x222222)
