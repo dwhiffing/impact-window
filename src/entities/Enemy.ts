@@ -11,7 +11,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
   private base: Phaser.GameObjects.Arc
   private indicator: Phaser.GameObjects.Arc
-  private healthBar: Phaser.GameObjects.Arc[] = []
+  private healthGraphics: Phaser.GameObjects.Graphics
   private spinTween?: Phaser.Tweens.Tween
   private timers?: Phaser.Time.TimerEvent[] = []
 
@@ -22,10 +22,8 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     this.base = scene.add.arc(0, 0).setDepth(1)
     this.indicator = scene.add.arc(0, 0).setAlpha(0)
-    for (let i = 0; i < 3; i++) {
-      this.healthBar.push(scene.add.arc(0, 0).setDepth(2))
-    }
-    this.add([this.base, ...this.healthBar])
+    this.healthGraphics = scene.add.graphics().setDepth(2)
+    this.add([this.base, this.healthGraphics])
     this.setVisible(false).setDepth(2)
   }
 
@@ -132,26 +130,34 @@ export class Enemy extends Phaser.GameObjects.Container {
     const fillTint = darkenColor(this.stats.color, 15)
     const GAP = 10
     const r = this.stats.size - 2
-    const gapTotal = GAP * this.stats.health
+    const r2 = r - 3
+
+    const gapTotal = this.stats.health > 1 ? GAP * this.stats.health : 0
     const available = 360 - gapTotal
     const arcDeg = available / this.stats.health
-    const start = -90 + GAP / 2
+    const startDeg = -90 + GAP / 2
 
-    this.healthBar.forEach((seg, i) => {
-      if (i >= this.health) {
-        seg.setVisible(false)
-        return
-      }
+    for (let i = 0; i < this.stats.health; i++) {
+      if (i >= this.health) break
 
-      const sDeg = start + i * (arcDeg + GAP)
+      const sDeg = startDeg + i * (arcDeg + GAP)
       const eDeg = sDeg + arcDeg
-      seg
-        .setVisible(true)
-        .setRadius(r)
-        .setStartAngle(sDeg)
-        .setEndAngle(eDeg)
-        .setFillStyle(fillTint, 1)
-    })
+      const sRad = Phaser.Math.DegToRad(sDeg)
+      const eRad = Phaser.Math.DegToRad(eDeg)
+
+      const ox = Math.cos(sRad) * r
+      const oy = Math.sin(sRad) * r
+      const ix = Math.cos(eRad) * r2
+      const iy = Math.sin(eRad) * r2
+
+      this.healthGraphics
+        .moveTo(ox, oy)
+        .arc(0, 0, r, sRad, eRad, false)
+        .lineTo(ix, iy)
+        .arc(0, 0, r2, eRad, sRad, true)
+        .fillStyle(fillTint, 1)
+        .fillPath()
+    }
   }
 
   get stats() {
