@@ -13,6 +13,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private indicator: Phaser.GameObjects.Arc
   private healthBar: Phaser.GameObjects.Arc[] = []
   private spinTween?: Phaser.Tweens.Tween
+  private timers?: Phaser.Time.TimerEvent[] = []
 
   constructor(scene: Game) {
     super(scene)
@@ -32,6 +33,8 @@ export class Enemy extends Phaser.GameObjects.Container {
     const { x, y, side } = this.computeSpawnPosition()
     this.spawnType = spawnType
     this.health = this.stats.health
+    this.timers?.forEach((t) => t.destroy())
+    this.timers = []
 
     this.body
       .setCircle(this.stats.size)
@@ -42,6 +45,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.setVisible(true)
     this.setPosition(x, y)
     this.updateHealthBar()
+    this.body.setVelocity(0)
 
     const d = 25
     const _x = x + (side === 1 ? -d : side === 3 ? d : 0)
@@ -97,19 +101,28 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.scene.addEnergy(this.stats.energyOnKill)
     } else {
       this.setAlpha(0.5)
-      this.scene.time.delayedCall(100, () => this.setAlpha(1))
+      const a = this.scene.time.delayedCall(100, () => this.setAlpha(1))
       this.spinTween?.destroy()
-      this.scene.time.delayedCall(250, () => this.move())
+      const b = this.scene.time.delayedCall(250, () => this.move())
+      this.timers?.push(a, b)
     }
     this.updateHealthBar()
   }
 
   kill = () => {
-    this.setActive(false).setAlpha(0)
-    this.setVisible(false)
+    this.setActive(false).setAlpha(0).setVisible(false)
+    this.body.setVelocity(0)
     this.scene.particles
       .setParticleTint(this.stats.color)
       .emitParticleAt(this.x, this.y, 15)
+
+    this.timers?.forEach((t) => t.destroy())
+    this.timers = []
+
+    this.scene.state.patch((s) => ({
+      score: s.score + (s.multi + 1) * this.stats.score,
+      multi: s.multi + 1,
+    }))
   }
 
   private updateHealthBar() {
@@ -144,7 +157,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
   computeSpawnPosition() {
     const { width, height } = this.scene.cameras.main
-    const d = 15
+    const d = 18
     const s = Phaser.Math.Between(0, 3)
     let x = 0
     let y = 0

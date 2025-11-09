@@ -11,7 +11,6 @@ export const PLAYER_WEAK_LAUNCH_SPEED = 200
 export const PLAYER_ACCELERATION = 40
 export const PLAYER_MIN_CRUSH_SPEED = 90
 export const PLAYER_LAUNCH_COOLDOWN_MS = 750
-export const BASE_SCORE = 10
 export const SPAWN_RATE = 1200
 
 export const DEAD_ZONE_SIZE = 10
@@ -30,10 +29,11 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   grunt: {
     color: 0xff4444,
     speed: 60,
-    size: 10,
+    size: 8,
     health: 1,
     energyOnKill: 3,
     speedBoost: 120,
+    score: 10,
   },
   heavy: {
     color: 0x8888ff,
@@ -42,6 +42,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     health: 2,
     energyOnKill: 6,
     speedBoost: 200,
+    score: 30,
   },
 }
 

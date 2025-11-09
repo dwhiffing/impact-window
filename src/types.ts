@@ -13,4 +13,5 @@ export type EnemyStats = {
   health: number
   energyOnKill: number
   speedBoost: number
+  score: number
 }

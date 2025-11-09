@@ -15,7 +15,6 @@ import {
   ENERGY_RECHARGE_RATE,
   WEAK_LAUNCH_COST,
   FULL_LAUNCH_COST,
-  BASE_SCORE,
   SPAWN_RATE,
 } from '../constants'
 
@@ -107,13 +106,12 @@ export class Game extends Scene {
 
   onCollide = (_p: any, e: any) => {
     const enemy = e as Enemy
-    if (!this.player.active || !enemy.active || this.player.isInvulnerable)
-      return false
+    if (!this.player.active || !enemy.active) return false
 
     if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
-      this.onHitEnemy(enemy)
+      if (enemy.alpha === 1) this.onHitEnemy(enemy)
     } else {
-      this.onGameOver()
+      if (!this.player.isInvulnerable) this.onGameOver()
     }
     return enemy.health > 0
   }
@@ -124,10 +122,6 @@ export class Game extends Scene {
     this.player.addImpulse(
       enemy.stats.speedBoost + MULTI_SPEED_BOOST * this.state.get().multi,
     )
-    this.state.patch((s) => ({
-      score: s.score + (s.multi + 1) * BASE_SCORE,
-      multi: s.multi + 1,
-    }))
   }
 
   onGameOver = () => {
