@@ -9,7 +9,8 @@ export class Enemy extends Phaser.GameObjects.Container {
   public spawnType: EnemyType = 'grunt'
   public health = 0
 
-  private base!: Phaser.GameObjects.Arc
+  private base: Phaser.GameObjects.Arc
+  private indicator: Phaser.GameObjects.Arc
   private healthBar: Phaser.GameObjects.Arc[] = []
   private spinTween?: Phaser.Tweens.Tween
 
@@ -19,15 +20,16 @@ export class Enemy extends Phaser.GameObjects.Container {
     scene.add.existing(this)
 
     this.base = scene.add.arc(0, 0).setDepth(9)
+    this.indicator = scene.add.arc(0, 0).setAlpha(0)
     for (let i = 0; i < 3; i++) {
       this.healthBar.push(scene.add.arc(0, 0).setDepth(10))
     }
     this.add([this.base, ...this.healthBar])
-    this.setVisible(false)
+    this.setVisible(false).setDepth(8)
   }
 
   spawn(spawnType: EnemyType) {
-    const { width, height } = this.scene.cameras.main
+    const { x, y, side } = this.computeSpawnPosition()
     this.spawnType = spawnType
     this.health = this.stats.health
 
@@ -38,39 +40,37 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.setAlpha(1).setActive(true)
     this.base.setRadius(this.stats.size).setFillStyle(this.stats.color, 1)
     this.setVisible(true)
-
-    const side = Phaser.Math.Between(0, 3)
-    let x = 0
-    let y = 0
-    const d = this.stats.size * 2
-
-    switch (side) {
-      case 0: // top
-        x = Phaser.Math.Between(0, width)
-        y = -d
-        break
-      case 1: // right
-        x = width + d
-        y = Phaser.Math.Between(0, height)
-        break
-      case 2: // bottom
-        x = Phaser.Math.Between(0, width)
-        y = height + d
-        break
-      case 3: // left
-        x = -d
-        y = Phaser.Math.Between(0, height)
-        break
-    }
-
     this.setPosition(x, y)
-    this.updatehealthBar()
-    this.move()
+    this.updateHealthBar()
+
+    const d = 25
+    const _x = x + (side === 1 ? -d : side === 3 ? d : 0)
+    const _y = y + (side === 2 ? -(d + 5) : side === 0 ? d : 0)
+    const t = this.scene.tweens
+    this.indicator
+      .setPosition(_x, _y)
+      .setFillStyle(this.stats.color)
+      .setRadius(3)
+
+    t.add({
+      targets: this.indicator,
+      alpha: 0.7,
+      duration: 500,
+      onComplete: () => {
+        t.add({
+          targets: this.indicator,
+          alpha: 0,
+          delay: 1000,
+          duration: 500,
+          onComplete: this.move,
+        })
+      },
+    })
   }
 
   move = () => {
     const { centerX, centerY } = this.scene.cameras.main
-    const s = 100
+    const s = 40
     const dx = centerX + Phaser.Math.Between(-s, s) - this.x
     const dy = centerY + Phaser.Math.Between(-s, s) - this.y
     const angle = Math.atan2(dy, dx)
@@ -142,5 +142,32 @@ export class Enemy extends Phaser.GameObjects.Container {
 
   get stats() {
     return ENEMY_STATS[this.spawnType]
+  }
+
+  computeSpawnPosition() {
+    const { width, height } = this.scene.cameras.main
+    const d = 15
+    const s = Phaser.Math.Between(0, 3)
+    let x = 0
+    let y = 0
+    switch (s) {
+      case 0:
+        x = Phaser.Math.Between(d, width - d)
+        y = -d
+        break
+      case 1:
+        x = width + d
+        y = Phaser.Math.Between(d, height - d)
+        break
+      case 2:
+        x = Phaser.Math.Between(d, width - d)
+        y = height + d
+        break
+      case 3:
+        x = -d
+        y = Phaser.Math.Between(d, height - d)
+        break
+    }
+    return { x, y, side: s }
   }
 }
