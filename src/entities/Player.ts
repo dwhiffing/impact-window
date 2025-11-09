@@ -17,6 +17,7 @@ export class Player extends Phaser.GameObjects.Arc {
   declare body: Phaser.Physics.Arcade.Body
   declare scene: Game
   private pendingImpulse = 0
+  private invulnerableUntil = 0
   public lastLaunch = 0
 
   constructor(scene: Game) {
@@ -112,10 +113,18 @@ export class Player extends Phaser.GameObjects.Arc {
       .emitParticleAt(this.x, this.y, 2)
   }
 
+  makeInvulnerable(ms: number) {
+    this.invulnerableUntil = this.scene.time.now + ms
+  }
+
   get canLaunch() {
     return (
       !this.lastLaunch ||
       !(this.scene.time.now - this.lastLaunch < PLAYER_LAUNCH_COOLDOWN_MS)
     )
+  }
+
+  get isInvulnerable() {
+    return this.scene.time.now < this.invulnerableUntil
   }
 }

@@ -144,6 +144,8 @@ export class Game extends Scene {
     const enemy = e as Enemy
     if (!this.player.active || !enemy.active) return false
 
+    if (this.player.isInvulnerable) return false
+
     if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
       this.onHitEnemy(enemy)
     } else {
@@ -154,6 +156,7 @@ export class Game extends Scene {
 
   onHitEnemy = (enemy: Enemy) => {
     enemy.damage()
+    this.player.makeInvulnerable(100)
     this.player.addImpulse(
       ENEMY_KILL_SPEED_BOOST + MULTI_SPEED_BOOST * this.state.get().multi,
     )
