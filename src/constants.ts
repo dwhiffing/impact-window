@@ -14,8 +14,13 @@ export const PLAYER_MAX_SPEED = 800
 export const PLAYER_DRAG = 0.2
 export const PLAYER_SIZE = 13
 export const PLAYER_LAUNCH_SPEED = 400
-export const PLAYER_ACCELERATION = 30
-export const PLAYER_MIN_CRUSH_SPEED = 50
+export const PLAYER_ACCELERATION = 40
+export const PLAYER_MIN_CRUSH_SPEED = 100
+export const PLAYER_LAUNCH_COOLDOWN_MS = 500
+
+export const DEAD_ZONE_SIZE = 3
+export const NUDGE_ZONE_SIZE = 40
+export const MAX_THUMB_SIZE = 100
 
 export const ENEMY_SIZE = 10
 export const ENEMY_COLOR = 0xff4444

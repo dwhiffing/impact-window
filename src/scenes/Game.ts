@@ -4,6 +4,8 @@ import { Enemy } from '../entities/Enemy'
 import { Player } from '../entities/Player'
 import { Line } from '../entities/Line'
 import {
+  DEAD_ZONE_SIZE,
+  NUDGE_ZONE_SIZE,
   ENEMY_KILL_SPEED_BOOST,
   MULTI_SPEED_BOOST,
   PARTICLE_CONFIG,
@@ -17,9 +19,9 @@ type IState = {
 }
 
 export class Game extends Scene {
-  private player: Player
-  private enemies: Phaser.Physics.Arcade.Group
-  private line: Line
+  public player: Player
+  public enemies: Phaser.Physics.Arcade.Group
+  public line: Line
   public particles: Phaser.GameObjects.Particles.ParticleEmitter
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
@@ -69,6 +71,15 @@ export class Game extends Scene {
   update = (_time: number, _delta: number): void => {
     this.player.update()
     this.renderTexture.clear().draw(this.trailParticles, 0, 0)
+
+    if (
+      this.input.activePointer.isDown &&
+      this.time.timeScale !== 0.2 &&
+      this.player.canLaunch
+    ) {
+      this.setTimeScale(0.2)
+      this.line.draw(this.input.activePointer)
+    }
   }
 
   onDrag = () => {
@@ -78,9 +89,16 @@ export class Game extends Scene {
 
   onRelease = () => {
     this.line.clear()
+
+    if (this.time.timeScale === 1) return
+
     this.state.patch({ multi: 0 })
-    this.player.launch(this.input.activePointer)
     this.setTimeScale(1)
+
+    const p = this.input.activePointer
+    const dist = Phaser.Math.Distance.Between(p.x, p.y, p.downX, p.downY)
+    if (dist > DEAD_ZONE_SIZE)
+      this.player.launch(p, dist <= NUDGE_ZONE_SIZE ? 0.15 : 1.5)
   }
 
   onCollide = (_p: any, e: any) => {

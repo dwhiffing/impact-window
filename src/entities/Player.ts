@@ -8,6 +8,7 @@ import {
   PLAYER_ACCELERATION,
   ENEMY_COLOR,
   PLAYER_LAUNCH_SPEED,
+  PLAYER_LAUNCH_COOLDOWN_MS,
 } from '../constants'
 import { Game } from '../scenes/Game'
 
@@ -15,6 +16,7 @@ export class Player extends Phaser.GameObjects.Arc {
   declare body: Phaser.Physics.Arcade.Body
   declare scene: Game
   private pendingImpulse = 0
+  public lastLaunch = 0
 
   constructor(scene: Game) {
     const { centerX, centerY } = scene.cameras.main
@@ -72,11 +74,9 @@ export class Player extends Phaser.GameObjects.Arc {
 
   get speed(): number {
     return (
-      Math.sqrt(this.body.velocity.x ** 2 + this.body.velocity.y ** 2) +
-      0.0000001
+      Math.sqrt(this.body.velocity.x ** 2 + this.body.velocity.y ** 2) + 0.1
     )
   }
-
   addImpulse(impulse: number) {
     const availableToMax = Math.max(0, PLAYER_MAX_SPEED - this.speed)
     const toAdd = Math.min(impulse, availableToMax)
@@ -88,14 +88,17 @@ export class Player extends Phaser.GameObjects.Arc {
     })
   }
 
-  launch(p: Phaser.Input.Pointer) {
+  launch(p: Phaser.Input.Pointer, mult = 1) {
+    if (!this.active) return
+
+    this.lastLaunch = this.scene.time.now
     const dx = -(p.x - p.downX)
     const dy = -(p.y - p.downY)
     const angle = Math.atan2(dy, dx)
-    const vx = Math.cos(angle) * 0.01
-    const vy = Math.sin(angle) * 0.01
+    const vx = Math.cos(angle) * this.speed
+    const vy = Math.sin(angle) * this.speed
     this.body.setVelocity(vx, vy)
-    this.pendingImpulse += PLAYER_LAUNCH_SPEED
+    this.pendingImpulse += PLAYER_LAUNCH_SPEED * mult
   }
 
   onWorldBounds() {
@@ -103,5 +106,12 @@ export class Player extends Phaser.GameObjects.Arc {
     this.scene.particles
       .setParticleTint(this.color)
       .emitParticleAt(this.x, this.y, 2)
+  }
+
+  get canLaunch() {
+    return (
+      !this.lastLaunch ||
+      !(this.scene.time.now - this.lastLaunch < PLAYER_LAUNCH_COOLDOWN_MS)
+    )
   }
 }
