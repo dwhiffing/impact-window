@@ -99,9 +99,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.setAlpha(0.5)
       this.scene.time.delayedCall(100, () => this.setAlpha(1))
       this.spinTween?.destroy()
-      this.scene.time.delayedCall(Phaser.Math.Between(500, 1000), () =>
-        this.move(),
-      )
+      this.scene.time.delayedCall(250, () => this.move())
     }
     this.updateHealthBar()
   }

@@ -16,6 +16,7 @@ import {
   WEAK_LAUNCH_COST,
   FULL_LAUNCH_COST,
   BASE_SCORE,
+  SPAWN_RATE,
 } from '../constants'
 
 export class Game extends Scene {
@@ -48,7 +49,11 @@ export class Game extends Scene {
     this.physics.world.on('worldbounds', this.onWorldBounds)
     this.physics.add.collider(this.player, this.enemies, undefined, this.onCollide) // prettier-ignore
 
-    this.time.addEvent({ delay: 600, loop: true, callback: this.spawnEnemy })
+    this.time.addEvent({
+      delay: SPAWN_RATE,
+      loop: true,
+      callback: this.spawnEnemy,
+    })
     this.spawnEnemy()
   }
 

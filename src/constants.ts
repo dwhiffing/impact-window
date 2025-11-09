@@ -4,18 +4,19 @@ import { EnemyType, EnemyStats } from './types'
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
-export const PLAYER_DRAG = 0.1
+export const PLAYER_DRAG = 0.15
 export const PLAYER_SIZE = 13
 export const PLAYER_FULL_LAUNCH_SPEED = 450
 export const PLAYER_WEAK_LAUNCH_SPEED = 200
 export const PLAYER_ACCELERATION = 40
-export const PLAYER_MIN_CRUSH_SPEED = 100
-export const PLAYER_LAUNCH_COOLDOWN_MS = 1000
+export const PLAYER_MIN_CRUSH_SPEED = 90
+export const PLAYER_LAUNCH_COOLDOWN_MS = 750
 export const BASE_SCORE = 10
+export const SPAWN_RATE = 1200
 
-export const DEAD_ZONE_SIZE = 3
-export const NUDGE_ZONE_SIZE = 40
-export const MAX_THUMB_SIZE = 100
+export const DEAD_ZONE_SIZE = 10
+export const NUDGE_ZONE_SIZE = 50
+export const MAX_THUMB_SIZE = 120
 
 export const ENEMY_COLOR = 0xff4444
 export const MULTI_SPEED_BOOST = 30
