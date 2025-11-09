@@ -69,6 +69,7 @@ export class Game extends Scene {
     this.state.on('change', ({ score, multi }) => {
       scoreText.setText(`${score}`)
       multiText.setText(multi > 0 ? `x${multi}` : '')
+      this.updateEnergyBar()
     })
 
     this.physics.add.collider(
@@ -94,9 +95,15 @@ export class Game extends Scene {
   }
 
   update = (_time: number, _delta: number): void => {
+    const dt = _delta / 1000
+
     this.player.update()
     this.renderTexture.clear().draw(this.trailParticles, 0, 0)
-    this.updateEnergy(_delta / 1000)
+
+    const rate = this.time.timeScale < 1 ? -1 : ENERGY_RECHARGE_RATE
+    this.state.patch((s) => ({
+      energy: Math.min(s.energy + rate * dt, MAX_ENERGY),
+    }))
 
     if (
       this.input.activePointer.isDown &&
@@ -128,7 +135,7 @@ export class Game extends Scene {
     const isWeak = dist <= NUDGE_ZONE_SIZE || energy < FULL_LAUNCH_COST
     const cost = isWeak ? WEAK_LAUNCH_COST : FULL_LAUNCH_COST
     if (energy >= cost) {
-      this.setEnergy(-cost)
+      this.state.patch((s) => ({ energy: Math.max(s.energy - cost, 0) }))
       this.player.launch(p, !isWeak)
     }
   }
@@ -181,22 +188,32 @@ export class Game extends Scene {
     this.physics.world.timeScale = 1 / scale
   }
 
-  updateEnergy = (dt: number) => {
-    const rate = this.time.timeScale < 1 ? -1 : ENERGY_RECHARGE_RATE
-    this.setEnergy(rate * dt)
-  }
-
-  setEnergy = (diff: number) => {
-    this.state.patch((s) => ({
-      energy: clamp(s.energy + diff, 0, MAX_ENERGY),
-    }))
+  updateEnergyBar = () => {
     const energy = this.state.get().energy
+    const width = this.cameras.main.width
     const p = clamp(energy / MAX_ENERGY, 0, 1)
     const f = this.energyMeterFill
-    f.setDisplaySize(this.cameras.main.width * p, f.height)
     const isWeak = energy < FULL_LAUNCH_COST
-    const color =
-      energy < WEAK_LAUNCH_COST ? 0x333333 : isWeak ? 0x00ffff : 0xffff00
+    const isDisabled = energy < WEAK_LAUNCH_COST
+    const color = isDisabled ? 0x333333 : isWeak ? 0x00ffff : 0xffff00
+    f.setDisplaySize(width * p, f.height)
     f.setFillStyle(color)
+  }
+
+  addEnergy = (amount: number) => {
+    const counter = { val: 0, last: 0 }
+    this.tweens.add({
+      targets: counter,
+      val: amount,
+      duration: 250,
+      ease: 'Linear',
+      onUpdate: () => {
+        const delta = counter.val - counter.last
+        counter.last = counter.val
+        this.state.patch((s) => ({
+          energy: Math.min(s.energy + delta, 100),
+        }))
+      },
+    })
   }
 }

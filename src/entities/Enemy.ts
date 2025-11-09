@@ -94,6 +94,7 @@ export class Enemy extends Phaser.GameObjects.Container {
 
     if (--this.health <= 0) {
       this.kill()
+      this.scene.addEnergy(this.stats.energyOnKill)
     } else {
       this.setAlpha(0.5)
       this.spinTween?.destroy()

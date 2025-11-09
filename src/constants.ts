@@ -35,6 +35,7 @@ export type EnemyStats = {
   speed: number
   size: number
   health: number
+  energyOnKill: number
 }
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
@@ -43,12 +44,14 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     speed: 60,
     size: ENEMY_SIZE,
     health: 1,
+    energyOnKill: 10,
   },
   heavy: {
     color: 0x8888ff,
     speed: 35,
     size: ENEMY_SIZE * 1.5,
     health: 2,
+    energyOnKill: 20,
   },
 }
 
