@@ -11,12 +11,19 @@ import {
   PARTICLE_CONFIG,
   PLAYER_MIN_CRUSH_SPEED,
   TRAIL_CONFIG,
+  MAX_ENERGY,
+  ENERGY_RECHARGE_RATE,
+  WEAK_LAUNCH_COST,
+  FULL_LAUNCH_COST,
 } from '../constants'
 
 type IState = {
   score: number
   multi: number
+  energy: number
 }
+
+const clamp = Phaser.Math.Clamp
 
 export class Game extends Scene {
   public player: Player
@@ -26,6 +33,7 @@ export class Game extends Scene {
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
   public state: HookState<IState>
+  private energyMeterFill: Phaser.GameObjects.Rectangle
 
   constructor() {
     super('Game')
@@ -47,8 +55,17 @@ export class Game extends Scene {
     const scoreText = this.add.text(x, height - 12, '0').setOrigin(0.5, 1)
     const multiText = this.add.text(x, height - 30, '').setOrigin(0.5, 1)
 
+    this.add
+      .rectangle(0, height, width, 5, 0x222222)
+      .setOrigin(0, 1)
+      .setDepth(9)
+    this.energyMeterFill = this.add
+      .rectangle(0, height, width, 5, 0x00cc99)
+      .setOrigin(0, 1)
+      .setDepth(10)
+
     this.state = withGlobalState<IState>(this, 'global')
-    this.state.set({ score: 0, multi: 0 })
+    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY })
     this.state.on('change', ({ score, multi }) => {
       scoreText.setText(`${score}`)
       multiText.setText(multi > 0 ? `x${multi}` : '')
@@ -71,6 +88,7 @@ export class Game extends Scene {
   update = (_time: number, _delta: number): void => {
     this.player.update()
     this.renderTexture.clear().draw(this.trailParticles, 0, 0)
+    this.updateEnergy(_delta / 1000)
 
     if (
       this.input.activePointer.isDown &&
@@ -92,13 +110,19 @@ export class Game extends Scene {
 
     if (this.time.timeScale === 1) return
 
-    this.state.patch({ multi: 0 })
     this.setTimeScale(1)
 
     const p = this.input.activePointer
     const dist = Phaser.Math.Distance.Between(p.x, p.y, p.downX, p.downY)
-    if (dist > DEAD_ZONE_SIZE)
-      this.player.launch(p, dist <= NUDGE_ZONE_SIZE ? 0.15 : 1.5)
+    if (dist <= DEAD_ZONE_SIZE) return
+
+    const energy = this.state.get().energy
+    const isWeak = dist <= NUDGE_ZONE_SIZE || energy < FULL_LAUNCH_COST
+    const cost = isWeak ? WEAK_LAUNCH_COST : FULL_LAUNCH_COST
+    if (energy >= cost) {
+      this.setEnergy(-cost)
+      this.player.launch(p, !isWeak)
+    }
   }
 
   onCollide = (_p: any, e: any) => {
@@ -146,5 +170,24 @@ export class Game extends Scene {
     this.particles.timeScale = scale
     this.trailParticles.timeScale = scale
     this.physics.world.timeScale = 1 / scale
+  }
+
+  updateEnergy = (dt: number) => {
+    const rate = this.time.timeScale < 1 ? -1 : ENERGY_RECHARGE_RATE
+    this.setEnergy(rate * dt)
+  }
+
+  setEnergy = (diff: number) => {
+    this.state.patch((s) => ({
+      energy: clamp(s.energy + diff, 0, MAX_ENERGY),
+    }))
+    const energy = this.state.get().energy
+    const p = clamp(energy / MAX_ENERGY, 0, 1)
+    const f = this.energyMeterFill
+    f.setDisplaySize(this.cameras.main.width * p, f.height)
+    const isWeak = energy < FULL_LAUNCH_COST
+    const color =
+      energy < WEAK_LAUNCH_COST ? 0x333333 : isWeak ? 0x00ffff : 0xffff00
+    f.setFillStyle(color)
   }
 }

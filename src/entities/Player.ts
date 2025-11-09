@@ -7,8 +7,9 @@ import {
   PLAYER_SIZE,
   PLAYER_ACCELERATION,
   ENEMY_COLOR,
-  PLAYER_LAUNCH_SPEED,
   PLAYER_LAUNCH_COOLDOWN_MS,
+  PLAYER_FULL_LAUNCH_SPEED,
+  PLAYER_WEAK_LAUNCH_SPEED,
 } from '../constants'
 import { Game } from '../scenes/Game'
 
@@ -51,6 +52,7 @@ export class Player extends Phaser.GameObjects.Arc {
     const t = Phaser.Math.Clamp(this.speed / PLAYER_MAX_SPEED, 0, 1)
     const eased = 1 - Math.pow(1 - t, 1.2)
     const scale = Phaser.Math.Linear(0.01, 0.2, eased)
+    this.scene.trailParticles.setParticleTint(this.color)
     this.scene.trailParticles.setParticleScale(scale)
     if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
       this.scene.trailParticles.setActive(true)
@@ -88,7 +90,7 @@ export class Player extends Phaser.GameObjects.Arc {
     })
   }
 
-  launch(p: Phaser.Input.Pointer, mult = 1) {
+  launch(p: Phaser.Input.Pointer, fullLaunch = false) {
     if (!this.active) return
 
     this.lastLaunch = this.scene.time.now
@@ -98,7 +100,9 @@ export class Player extends Phaser.GameObjects.Arc {
     const vx = Math.cos(angle) * this.speed
     const vy = Math.sin(angle) * this.speed
     this.body.setVelocity(vx, vy)
-    this.pendingImpulse += PLAYER_LAUNCH_SPEED * mult
+    this.pendingImpulse += fullLaunch
+      ? PLAYER_FULL_LAUNCH_SPEED
+      : PLAYER_WEAK_LAUNCH_SPEED
   }
 
   onWorldBounds() {

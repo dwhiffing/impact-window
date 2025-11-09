@@ -11,12 +11,13 @@ export const PARTICLE_CONFIG = {
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
-export const PLAYER_DRAG = 0.2
+export const PLAYER_DRAG = 0.1
 export const PLAYER_SIZE = 13
-export const PLAYER_LAUNCH_SPEED = 400
+export const PLAYER_FULL_LAUNCH_SPEED = 450
+export const PLAYER_WEAK_LAUNCH_SPEED = 180
 export const PLAYER_ACCELERATION = 40
 export const PLAYER_MIN_CRUSH_SPEED = 100
-export const PLAYER_LAUNCH_COOLDOWN_MS = 500
+export const PLAYER_LAUNCH_COOLDOWN_MS = 200
 
 export const DEAD_ZONE_SIZE = 3
 export const NUDGE_ZONE_SIZE = 40
@@ -37,3 +38,8 @@ export const TRAIL_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitterCon
     visible: false,
     active: false,
   }
+
+export const MAX_ENERGY = 100
+export const ENERGY_RECHARGE_RATE = 12
+export const WEAK_LAUNCH_COST = 15
+export const FULL_LAUNCH_COST = 30
