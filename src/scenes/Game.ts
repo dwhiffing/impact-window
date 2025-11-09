@@ -18,6 +18,7 @@ import {
   FULL_LAUNCH_COST,
   SPAWN_RATE,
   POWERUPS,
+  LOCAL_STORAGE_KEY,
 } from '../constants'
 
 export class Game extends Scene {
@@ -158,8 +159,15 @@ export class Game extends Scene {
       .shake(300, 0.01)
       .fade(800, 0, 0, 0, true, (_: any, p: number) => {
         if (p === 1) {
+          const current = this.state.get().score || 0
+          const previous = Number(
+            localStorage.getItem(LOCAL_STORAGE_KEY) || '0',
+          )
+          if (current > previous)
+            localStorage.setItem(LOCAL_STORAGE_KEY, `${current}`)
+
           this.state.clearListeners()
-          this.scene.restart()
+          this.scene.start('Menu')
         }
       })
   }

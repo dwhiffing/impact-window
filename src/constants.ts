@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser'
 import { EnemyType, EnemyStats, PowerupDef } from './types'
 
+export const LOCAL_STORAGE_KEY = 'impact-window-score'
+
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
