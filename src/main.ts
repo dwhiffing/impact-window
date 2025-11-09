@@ -5,8 +5,8 @@ import { Game, Types } from 'phaser'
 
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 256,
-  height: 256,
+  width: 180,
+  height: 280,
   parent: 'game-container',
   backgroundColor: '#000',
   pixelArt: true,
