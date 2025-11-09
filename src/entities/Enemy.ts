@@ -92,18 +92,18 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   damage = () => {
-    if (this.alpha < 1) return
-
     if (--this.health <= 0) {
       this.kill()
       this.scene.addEnergy(this.stats.energyOnKill)
     } else {
+      this.setAlpha(0.5)
+      this.scene.time.delayedCall(100, () => this.setAlpha(1))
       this.spinTween?.destroy()
       this.scene.time.delayedCall(Phaser.Math.Between(500, 1000), () =>
         this.move(),
       )
     }
-    this.updatehealthBar()
+    this.updateHealthBar()
   }
 
   kill = () => {
@@ -114,7 +114,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       .emitParticleAt(this.x, this.y, 15)
   }
 
-  private updatehealthBar() {
+  private updateHealthBar() {
     const fillTint = darkenColor(this.stats.color, 15)
     const GAP = 10
     const r = this.stats.size - 2
