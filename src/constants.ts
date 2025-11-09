@@ -14,10 +14,11 @@ export const PLAYER_MAX_SPEED = 800
 export const PLAYER_DRAG = 0.1
 export const PLAYER_SIZE = 13
 export const PLAYER_FULL_LAUNCH_SPEED = 450
-export const PLAYER_WEAK_LAUNCH_SPEED = 180
+export const PLAYER_WEAK_LAUNCH_SPEED = 200
 export const PLAYER_ACCELERATION = 40
 export const PLAYER_MIN_CRUSH_SPEED = 100
-export const PLAYER_LAUNCH_COOLDOWN_MS = 200
+export const PLAYER_LAUNCH_COOLDOWN_MS = 1000
+export const BASE_SCORE = 10
 
 export const DEAD_ZONE_SIZE = 3
 export const NUDGE_ZONE_SIZE = 40
@@ -25,7 +26,6 @@ export const MAX_THUMB_SIZE = 100
 
 export const ENEMY_SIZE = 10
 export const ENEMY_COLOR = 0xff4444
-export const ENEMY_KILL_SPEED_BOOST = 150
 export const MULTI_SPEED_BOOST = 30
 
 export type EnemyType = 'grunt' | 'heavy'
@@ -36,6 +36,7 @@ export type EnemyStats = {
   size: number
   health: number
   energyOnKill: number
+  speedBoost: number
 }
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
@@ -44,14 +45,16 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     speed: 60,
     size: ENEMY_SIZE,
     health: 1,
-    energyOnKill: 10,
+    energyOnKill: 3,
+    speedBoost: 120,
   },
   heavy: {
     color: 0x8888ff,
     speed: 35,
     size: ENEMY_SIZE * 1.5,
     health: 2,
-    energyOnKill: 20,
+    energyOnKill: 6,
+    speedBoost: 200,
   },
 }
 
@@ -68,5 +71,5 @@ export const TRAIL_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitterCon
 
 export const MAX_ENERGY = 100
 export const ENERGY_RECHARGE_RATE = 12
-export const WEAK_LAUNCH_COST = 15
-export const FULL_LAUNCH_COST = 30
+export const WEAK_LAUNCH_COST = 12
+export const FULL_LAUNCH_COST = 40

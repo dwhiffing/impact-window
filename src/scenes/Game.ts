@@ -6,7 +6,6 @@ import { Line } from '../entities/Line'
 import {
   DEAD_ZONE_SIZE,
   NUDGE_ZONE_SIZE,
-  ENEMY_KILL_SPEED_BOOST,
   MULTI_SPEED_BOOST,
   PARTICLE_CONFIG,
   PLAYER_MIN_CRUSH_SPEED,
@@ -15,6 +14,7 @@ import {
   ENERGY_RECHARGE_RATE,
   WEAK_LAUNCH_COST,
   FULL_LAUNCH_COST,
+  BASE_SCORE,
 } from '../constants'
 
 type IState = {
@@ -158,10 +158,10 @@ export class Game extends Scene {
     enemy.damage()
     this.player.makeInvulnerable(100)
     this.player.addImpulse(
-      ENEMY_KILL_SPEED_BOOST + MULTI_SPEED_BOOST * this.state.get().multi,
+      enemy.stats.speedBoost + MULTI_SPEED_BOOST * this.state.get().multi,
     )
     this.state.patch((s) => ({
-      score: s.score + (s.multi + 1),
+      score: s.score + (s.multi + 1) * BASE_SCORE,
       multi: s.multi + 1,
     }))
   }
