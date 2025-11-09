@@ -11,12 +11,14 @@ export type PowerupDef = {
   rarity: number
 }
 
+export type EnemyType = 'grunt' | 'heavy' | 'fast'
 
 export type EnemyStats = {
   color: number
   speed: number
   size: number
   health: number
+  damage: number
   energyOnKill: number
   speedBoost: number
   score: number

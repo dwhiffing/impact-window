@@ -53,12 +53,11 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.enemies, undefined, this.onCollide) // prettier-ignore
     this.physics.add.overlap(this.player, this.powerup, this.player.onPickupPowerup) // prettier-ignore
     this.time.addEvent({ delay: SPAWN_RATE, loop: true, callback: this.spawnEnemy }) // prettier-ignore
-    this.time.addEvent({ delay: 5000, loop: true, callback: this.spawnPowerup }) // prettier-ignore
 
     this.spawnEnemy()
   }
 
-  spawnPowerup = () => {
+  spawnPowerup = (x: number, y: number) => {
     if (!this.powerup || this.powerup.active) return
 
     const total = POWERUPS.reduce((s, p) => s + p.rarity, 0)
@@ -72,9 +71,6 @@ export class Game extends Scene {
       pick -= p.rarity
     }
 
-    const d = 40
-    const x = Phaser.Math.Between(d, this.cameras.main.width - d)
-    const y = Phaser.Math.Between(d, this.cameras.main.height - d)
     this.powerup.spawnAt(x, y, chosen)
   }
 
@@ -133,6 +129,7 @@ export class Game extends Scene {
     if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
       if (enemy.alpha === 1) this.onHitEnemy(enemy)
     } else {
+      if (enemy.stats.damage === 0) return false
       if (!this.player.isInvulnerable) this.onGameOver()
     }
     return enemy.health > 0

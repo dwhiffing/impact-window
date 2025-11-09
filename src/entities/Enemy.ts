@@ -116,6 +116,9 @@ export class Enemy extends Phaser.GameObjects.Container {
       .setParticleTint(this.stats.color)
       .emitParticleAt(this.x, this.y, 15)
 
+    if (this.spawnType === 'fast') {
+      this.scene.spawnPowerup(this.x, this.y)
+    }
     this.timers?.forEach((t) => t.destroy())
     this.timers = []
 

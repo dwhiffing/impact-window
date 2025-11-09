@@ -47,23 +47,35 @@ export const POWERUPS: PowerupDef[] = [
 ]
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
+  fast: {
+    color: 0x44ff44,
+    speed: 240,
+    size: 4,
+    health: 1,
+    energyOnKill: 3,
+    speedBoost: 120,
+    score: 100,
+    damage: 0,
+  },
   grunt: {
     color: 0xff4444,
     speed: 60,
-    size: 8,
+    size: 7,
     health: 1,
     energyOnKill: 3,
     speedBoost: 120,
     score: 10,
+    damage: 1,
   },
   heavy: {
     color: 0x8888ff,
     speed: 35,
-    size: 15,
+    size: 12,
     health: 2,
     energyOnKill: 6,
     speedBoost: 200,
     score: 30,
+    damage: 1,
   },
 }
 
