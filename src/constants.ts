@@ -28,6 +28,30 @@ export const ENEMY_COLOR = 0xff4444
 export const ENEMY_KILL_SPEED_BOOST = 150
 export const MULTI_SPEED_BOOST = 30
 
+export type EnemyType = 'grunt' | 'heavy'
+
+export type EnemyStats = {
+  color: number
+  speed: number
+  size: number
+  health: number
+}
+
+export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
+  grunt: {
+    color: 0xff4444,
+    speed: 60,
+    size: ENEMY_SIZE,
+    health: 1,
+  },
+  heavy: {
+    color: 0x8888ff,
+    speed: 35,
+    size: ENEMY_SIZE * 1.5,
+    health: 2,
+  },
+}
+
 export const TRAIL_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig =
   {
     lifespan: 600,

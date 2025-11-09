@@ -71,17 +71,25 @@ export class Game extends Scene {
       multiText.setText(multi > 0 ? `x${multi}` : '')
     })
 
-    this.physics.add.overlap(this.player, this.enemies, this.onCollide)
+    this.physics.add.collider(
+      this.player,
+      this.enemies,
+      undefined,
+      this.onCollide,
+    )
     this.input.on('pointermove', this.onDrag)
     this.input.on('pointerup', this.onRelease)
     this.input.on('gameout', this.onRelease)
     this.physics.world.on('worldbounds', this.onWorldBounds)
 
-    this.enemies.get().spawn()
+    this.enemies.get().spawn('grunt')
     this.time.addEvent({
       delay: 600,
       loop: true,
-      callback: () => this.enemies.get().spawn(),
+      callback: () =>
+        this.enemies
+          .get()
+          .spawn(Phaser.Math.Between(0, 3) === 0 ? 'heavy' : 'grunt'),
     })
   }
 
@@ -127,17 +135,18 @@ export class Game extends Scene {
 
   onCollide = (_p: any, e: any) => {
     const enemy = e as Enemy
-    if (!this.player.active || !enemy.active) return
+    if (!this.player.active || !enemy.active) return false
 
     if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
       this.onHitEnemy(enemy)
     } else {
       this.onGameOver()
     }
+    return enemy.health > 0
   }
 
   onHitEnemy = (enemy: Enemy) => {
-    enemy.kill()
+    enemy.damage()
     this.player.addImpulse(
       ENEMY_KILL_SPEED_BOOST + MULTI_SPEED_BOOST * this.state.get().multi,
     )
