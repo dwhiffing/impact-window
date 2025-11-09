@@ -1,5 +1,5 @@
 import { Scene } from 'phaser'
-import { PLAYER_SIZE } from '../constants'
+import { PLAYER_COLOR, PLAYER_SIZE } from '../constants'
 
 export class Boot extends Scene {
   constructor() {
@@ -7,13 +7,19 @@ export class Boot extends Scene {
   }
 
   init() {
-    const bar = this.add.rectangle(0, 0, 0, 64, 0xffffff).setOrigin(0, 0)
-    this.load.on('progress', (p: number) => (bar.width = 64 * p))
+    const bar = this.add
+      .rectangle(0, 0, 0, this.cameras.main.height, PLAYER_COLOR)
+      .setOrigin(0, 0)
+    this.load.on(
+      'progress',
+      (p: number) => (bar.width = this.cameras.main.width * p),
+    )
   }
 
   preload() {
     this.load.setPath('assets/')
     this.load.bitmapFont('pixel-dan', 'pixel-dan.png', 'pixel-dan.xml')
+    this.load.image('title', 'title.png')
     this.add
       .graphics()
       .fillStyle(0xffffff, 1)
@@ -30,6 +36,6 @@ export class Boot extends Scene {
   }
 
   create() {
-    this.scene.start('Game')
+    this.scene.start('Menu')
   }
 }
