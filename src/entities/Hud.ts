@@ -9,21 +9,27 @@ export class Hud {
     this.scene = scene
     const { centerX: x, width, height } = this.scene.cameras.main
 
-    const scoreText = this.scene.add.text(x, height - 12, '0').setOrigin(0.5, 1)
-    const multiText = this.scene.add.text(x, height - 30, '').setOrigin(0.5, 1)
+    const scoreText = this.scene.add
+      .bitmapText(x, height - 5, 'pixel-dan', '0')
+      .setOrigin(0.5, 1)
+      .setFontSize(10)
+    const multiText = this.scene.add
+      .bitmapText(x, height - 23, 'pixel-dan', '')
+      .setOrigin(0.5, 1)
+      .setFontSize(5)
 
     this.scene.add
-      .rectangle(0, height, width, 5, 0x222222)
+      .rectangle(0, height, width, 3, 0x222222)
       .setOrigin(0, 1)
       .setDepth(9)
     this.energyMeterFill = this.scene.add
-      .rectangle(0, height, width, 5, 0x00cc99)
+      .rectangle(0, height, width, 3, 0x00cc99)
       .setOrigin(0, 1)
       .setDepth(10)
 
     this.scene.state.on('change', ({ score, multi }) => {
       scoreText.setText(`${score}`)
-      multiText.setText(multi > 0 ? `x${multi}` : '')
+      multiText.setText(multi > 0 ? `X${multi}` : '')
       this.updateEnergyBar()
     })
   }

@@ -12,6 +12,8 @@ export class Boot extends Scene {
   }
 
   preload() {
+    this.load.setPath('assets/')
+    this.load.bitmapFont('pixel-dan', 'pixel-dan.png', 'pixel-dan.xml')
     this.add
       .graphics()
       .fillStyle(0xffffff, 1)
