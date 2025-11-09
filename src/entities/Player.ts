@@ -11,20 +11,32 @@ import {
   PLAYER_FULL_LAUNCH_SPEED,
   PLAYER_WEAK_LAUNCH_SPEED,
 } from '../constants'
+import { darkenColor } from '../darkenColor'
 import { Game } from '../scenes/Game'
 
-export class Player extends Phaser.GameObjects.Arc {
+export class Player extends Phaser.GameObjects.Container {
   declare body: Phaser.Physics.Arcade.Body
   declare scene: Game
   private pendingImpulse = 0
   private invulnerableUntil = 0
   public lastLaunch = 0
+  private base: Phaser.GameObjects.Arc
+  private cooldownArc: Phaser.GameObjects.Graphics
 
   constructor(scene: Game) {
+    super(scene)
+
     const { centerX, centerY } = scene.cameras.main
-    super(scene, centerX, centerY, PLAYER_SIZE, 0, 360, true, PLAYER_COLOR)
-    scene.physics.add.existing(this)
+    this.setPosition(centerX, centerY)
+    this.base = scene.add
+      .arc(0, 0, PLAYER_SIZE, 0, 360, true, PLAYER_COLOR)
+      .setDepth(9)
+
+    this.cooldownArc = scene.add.graphics().setDepth(10)
+    this.add([this.base, this.cooldownArc])
+
     scene.add.existing(this)
+    scene.physics.add.existing(this)
     this.body
       .setCircle(PLAYER_SIZE)
       .setImmovable(false)
@@ -33,13 +45,37 @@ export class Player extends Phaser.GameObjects.Arc {
       .setBounce(1)
       .setDamping(true)
       .setDrag(PLAYER_DRAG)
+      .setOffset(-PLAYER_SIZE, -PLAYER_SIZE)
 
     this.body.onWorldBounds = true
   }
 
   update() {
-    this.setFillStyle(this.color)
+    this.base.setFillStyle(this.color)
+    this.updateCooldownTimer()
+    this.applyImpulse()
+    this.updateTrail()
+  }
 
+  updateCooldownTimer = () => {
+    const progress =
+      (this.scene.time.now - this.lastLaunch) / PLAYER_LAUNCH_COOLDOWN_MS
+
+    if (progress <= 1) {
+      const startDeg = -90
+      const endDeg = startDeg + Math.floor(360 * progress)
+      const start = Phaser.Math.DegToRad(startDeg)
+      const end = Phaser.Math.DegToRad(endDeg)
+      this.cooldownArc
+        .clear()
+        .moveTo(0, 0)
+        .arc(0, 0, PLAYER_SIZE - 2, start, end, false)
+        .fillStyle(darkenColor(this.color, 30), 1)
+        .fillPath()
+    }
+  }
+
+  applyImpulse = () => {
     if (this.pendingImpulse > 0) {
       const apply = Math.min(this.pendingImpulse, PLAYER_ACCELERATION)
       const nx = this.body.velocity.x / this.speed
@@ -49,7 +85,9 @@ export class Player extends Phaser.GameObjects.Arc {
       this.pendingImpulse -= apply
       if (this.pendingImpulse <= 0) this.pendingImpulse = 0
     }
+  }
 
+  updateTrail = () => {
     const t = Phaser.Math.Clamp(this.speed / PLAYER_MAX_SPEED, 0, 1)
     const eased = 1 - Math.pow(1 - t, 1.2)
     const scale = Phaser.Math.Linear(0.01, 0.2, eased)
@@ -63,7 +101,7 @@ export class Player extends Phaser.GameObjects.Arc {
   }
 
   kill = () => {
-    this.setActive(false).setAlpha(0)
+    this.setActive(false).setAlpha(0).setVisible(false)
     this.scene.particles
       .setParticleTint(this.color)
       .emitParticleAt(this.x, this.y, 50)
@@ -80,6 +118,7 @@ export class Player extends Phaser.GameObjects.Arc {
       Math.sqrt(this.body.velocity.x ** 2 + this.body.velocity.y ** 2) + 0.1
     )
   }
+
   addImpulse(impulse: number) {
     const availableToMax = Math.max(0, PLAYER_MAX_SPEED - this.speed)
     const toAdd = Math.min(impulse, availableToMax)

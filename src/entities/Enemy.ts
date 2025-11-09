@@ -1,5 +1,6 @@
 import { ENEMY_STATS, EnemyType } from '../constants'
 import { Game } from '../scenes/Game'
+import { darkenColor } from '../darkenColor'
 
 export class Enemy extends Phaser.GameObjects.Container {
   declare scene: Game
@@ -143,11 +144,4 @@ export class Enemy extends Phaser.GameObjects.Container {
   get stats() {
     return ENEMY_STATS[this.spawnType]
   }
-}
-
-const darkenColor = (color: number, amount: number) => {
-  const Color = Phaser.Display.Color
-  const c = Color.ValueToColor(color)
-  const d = Color.Interpolate.ColorWithColor(c, new Color(0, 0, 0), 100, amount)
-  return Color.GetColor(d.r, d.g, d.b)
 }
