@@ -124,6 +124,11 @@ export class Enemy extends Phaser.GameObjects.Container {
       score: s.score + (s.multi + 1) * this.stats.score,
       multi: s.multi + 1,
     }))
+
+    this.scene.player.trailParticles.setParticleTint(this.stats.color)
+    this.scene.time.delayedCall(Phaser.Math.Between(50, 100), () => {
+      this.scene.player.trailParticles.setParticleTint(this.scene.player.color)
+    })
   }
 
   private updateHealthBar() {
@@ -136,6 +141,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     const available = 360 - gapTotal
     const arcDeg = available / this.stats.health
     const startDeg = -90 + GAP / 2
+    this.healthGraphics.clear()
 
     for (let i = 0; i < this.stats.health; i++) {
       if (i >= this.health) break
@@ -151,7 +157,6 @@ export class Enemy extends Phaser.GameObjects.Container {
       const iy = Math.sin(eRad) * r2
 
       this.healthGraphics
-        .clear()
         .moveTo(ox, oy)
         .arc(0, 0, r, sRad, eRad, false)
         .lineTo(ix, iy)

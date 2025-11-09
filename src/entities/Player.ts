@@ -6,7 +6,6 @@ import {
   PLAYER_MIN_CRUSH_SPEED,
   PLAYER_SIZE,
   PLAYER_ACCELERATION,
-  ENEMY_COLOR,
   PLAYER_LAUNCH_COOLDOWN_MS,
   PLAYER_FULL_LAUNCH_SPEED,
   PLAYER_WEAK_LAUNCH_SPEED,
@@ -86,8 +85,8 @@ export class Player extends Phaser.GameObjects.Container {
 
     this.powerupArc
       .clear()
-      .arc(0, 0, PLAYER_SIZE + 4, start, end, false)
       .lineStyle(3, color, 1)
+      .arc(0, 0, PLAYER_SIZE + 4, start, end, false)
       .strokePath()
   }
 
@@ -139,7 +138,6 @@ export class Player extends Phaser.GameObjects.Container {
     const t = Phaser.Math.Clamp(this.speed / PLAYER_MAX_SPEED, 0, 1)
     const eased = 1 - Math.pow(1 - t, 1.2)
     const scale = Phaser.Math.Linear(0.01, 0.2, eased)
-    this.trailParticles.setParticleTint(this.color)
     this.trailParticles.setParticleScale(scale)
     if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
       this.trailParticles.setActive(true)
@@ -173,10 +171,6 @@ export class Player extends Phaser.GameObjects.Container {
     const toAdd = Math.min(impulse, availableToMax)
     if (toAdd <= 0) return
     this.pendingImpulse += toAdd
-    this.trailParticles.setParticleTint(ENEMY_COLOR)
-    this.scene.time.delayedCall(Phaser.Math.Between(50, 100), () => {
-      this.trailParticles.setParticleTint(this.color)
-    })
   }
 
   launch(p: Phaser.Input.Pointer, fullLaunch = false) {
