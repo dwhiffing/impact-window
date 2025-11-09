@@ -25,6 +25,7 @@ export class Player extends Phaser.GameObjects.Container {
   public lastLaunch = 0
   private base: Phaser.GameObjects.Arc
   private cooldownArc: Phaser.GameObjects.Graphics
+  private powerupArc: Phaser.GameObjects.Graphics
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
   private activePowerup?: { def: PowerupDef; until: number }
@@ -39,7 +40,8 @@ export class Player extends Phaser.GameObjects.Container {
       .setDepth(1)
 
     this.cooldownArc = scene.add.graphics().setDepth(2)
-    this.add([this.base, this.cooldownArc])
+    this.powerupArc = scene.add.graphics().setDepth(4)
+    this.add([this.base, this.cooldownArc, this.powerupArc])
 
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -64,8 +66,29 @@ export class Player extends Phaser.GameObjects.Container {
   update() {
     this.base.setFillStyle(this.color)
     this.updateCooldownTimer()
+    this.updatePowerupArc()
     this.applyImpulse()
     this.updateTrail()
+  }
+
+  updatePowerupArc = () => {
+    const active = this.activePowerup
+    if (!active) return
+
+    const remaining = Math.max(0, active.until - this.scene.time.now)
+    const fraction = Phaser.Math.Clamp(remaining / active.def.duration, 0, 1)
+
+    const startDeg = -90
+    const endDeg = startDeg + Math.floor(360 * fraction)
+    const start = Phaser.Math.DegToRad(startDeg)
+    const end = Phaser.Math.DegToRad(endDeg)
+    const color = active.def.color ?? PLAYER_COLOR
+
+    this.powerupArc
+      .clear()
+      .arc(0, 0, PLAYER_SIZE + 4, start, end, false)
+      .lineStyle(3, color, 1)
+      .strokePath()
   }
 
   onPickupPowerup = (_p: any, pu: any) => {
