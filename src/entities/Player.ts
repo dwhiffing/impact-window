@@ -69,18 +69,16 @@ export class Player extends Phaser.GameObjects.Container {
     const progress =
       (this.scene.time.now - this.lastLaunch) / PLAYER_LAUNCH_COOLDOWN_MS
 
-    if (progress <= 1) {
-      const startDeg = -90
-      const endDeg = startDeg + Math.floor(360 * progress)
-      const start = Phaser.Math.DegToRad(startDeg)
-      const end = Phaser.Math.DegToRad(endDeg)
-      this.cooldownArc
-        .clear()
-        .moveTo(0, 0)
-        .arc(0, 0, PLAYER_SIZE - 2, start, end, false)
-        .fillStyle(darkenColor(this.color, 30), 1)
-        .fillPath()
-    }
+    const startDeg = -90
+    const endDeg = startDeg + Math.floor(360 * progress)
+    const start = Phaser.Math.DegToRad(startDeg)
+    const end = Phaser.Math.DegToRad(endDeg)
+    this.cooldownArc
+      .clear()
+      .moveTo(0, 0)
+      .arc(0, 0, PLAYER_SIZE - 2, start, end, false)
+      .fillStyle(darkenColor(this.color, 30), 1)
+      .fillPath()
   }
 
   applyImpulse = () => {

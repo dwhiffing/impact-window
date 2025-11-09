@@ -3,6 +3,8 @@ import { HookState, withGlobalState } from 'phaser-hooks'
 import { Enemy } from '../entities/Enemy'
 import { Player } from '../entities/Player'
 import { Line } from '../entities/Line'
+import { Hud } from '../entities/Hud'
+import { IState } from '../types'
 import {
   DEAD_ZONE_SIZE,
   NUDGE_ZONE_SIZE,
@@ -16,76 +18,44 @@ import {
   BASE_SCORE,
 } from '../constants'
 
-type IState = {
-  score: number
-  multi: number
-  energy: number
-}
-
-const clamp = Phaser.Math.Clamp
-
 export class Game extends Scene {
   public player: Player
   public enemies: Phaser.Physics.Arcade.Group
   public line: Line
+  public hud: Hud
   public particles: Phaser.GameObjects.Particles.ParticleEmitter
   public state: HookState<IState>
-  public energyMeterFill: Phaser.GameObjects.Rectangle
 
   constructor() {
     super('Game')
   }
 
   create(): void {
-    const { centerX: x, width, height } = this.cameras.main
     this.cameras.main.fadeFrom(800, 0, 0, 0)
+
+    this.state = withGlobalState<IState>(this, 'global')
+    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY })
 
     this.player = new Player(this)
     this.line = new Line(this)
     this.enemies = this.physics.add.group({ classType: Enemy })
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
+    this.hud = new Hud(this)
 
-    const scoreText = this.add.text(x, height - 12, '0').setOrigin(0.5, 1)
-    const multiText = this.add.text(x, height - 30, '').setOrigin(0.5, 1)
-
-    this.add
-      .rectangle(0, height, width, 5, 0x222222)
-      .setOrigin(0, 1)
-      .setDepth(9)
-    this.energyMeterFill = this.add
-      .rectangle(0, height, width, 5, 0x00cc99)
-      .setOrigin(0, 1)
-      .setDepth(10)
-
-    this.state = withGlobalState<IState>(this, 'global')
-    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY })
-    this.state.on('change', ({ score, multi }) => {
-      scoreText.setText(`${score}`)
-      multiText.setText(multi > 0 ? `x${multi}` : '')
-      this.updateEnergyBar()
-    })
-
-    this.physics.add.collider(
-      this.player,
-      this.enemies,
-      undefined,
-      this.onCollide,
-    )
     this.input.on('pointermove', this.onDrag)
     this.input.on('pointerup', this.onRelease)
     this.input.on('gameout', this.onRelease)
     this.physics.world.on('worldbounds', this.onWorldBounds)
+    this.physics.add.collider(this.player, this.enemies, undefined, this.onCollide) // prettier-ignore
 
-    this.enemies.get().spawn('grunt')
-    this.time.addEvent({
-      delay: 600,
-      loop: true,
-      callback: () =>
-        this.enemies
-          .get()
-          .spawn(Phaser.Math.Between(0, 3) === 0 ? 'heavy' : 'grunt'),
-    })
+    this.time.addEvent({ delay: 600, loop: true, callback: this.spawnEnemy })
+    this.spawnEnemy()
   }
+
+  spawnEnemy = () =>
+    this.enemies
+      .get()
+      .spawn(Phaser.Math.Between(0, 3) === 0 ? 'heavy' : 'grunt')
 
   update = (_time: number, _delta: number): void => {
     const dt = _delta / 1000
@@ -97,18 +67,16 @@ export class Game extends Scene {
       energy: Math.min(s.energy + rate * dt, MAX_ENERGY),
     }))
 
-    if (
-      this.input.activePointer.isDown &&
-      this.time.timeScale !== 0.2 &&
-      this.player.canLaunch
-    ) {
+    if (this.input.activePointer.isDown) {
+      if (this.time.timeScale < 1 || !this.player.canLaunch) return
+
       this.setTimeScale(0.2)
-      this.line.draw(this.input.activePointer)
     }
   }
 
   onDrag = () => {
     if (!this.input.activePointer.isDown) return
+
     this.line.draw(this.input.activePointer)
   }
 
@@ -134,9 +102,8 @@ export class Game extends Scene {
 
   onCollide = (_p: any, e: any) => {
     const enemy = e as Enemy
-    if (!this.player.active || !enemy.active) return false
-
-    if (this.player.isInvulnerable) return false
+    if (!this.player.active || !enemy.active || this.player.isInvulnerable)
+      return false
 
     if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
       this.onHitEnemy(enemy)
@@ -160,8 +127,8 @@ export class Game extends Scene {
 
   onGameOver = () => {
     this.player.kill()
-    this.cameras.main.flash(50, 255, 255, 255)
     this.cameras.main
+      .flash(50, 255, 255, 255)
       .shake(300, 0.01)
       .fade(800, 0, 0, 0, true, (_: any, p: number) => {
         if (p === 1) {
@@ -181,18 +148,6 @@ export class Game extends Scene {
     this.particles.timeScale = scale
     this.player.trailParticles.timeScale = scale
     this.physics.world.timeScale = 1 / scale
-  }
-
-  updateEnergyBar = () => {
-    const energy = this.state.get().energy
-    const width = this.cameras.main.width
-    const p = clamp(energy / MAX_ENERGY, 0, 1)
-    const f = this.energyMeterFill
-    const isWeak = energy < FULL_LAUNCH_COST
-    const isDisabled = energy < WEAK_LAUNCH_COST
-    const color = isDisabled ? 0x333333 : isWeak ? 0x00ffff : 0xffff00
-    f.setDisplaySize(width * p, f.height)
-    f.setFillStyle(color)
   }
 
   addEnergy = (amount: number) => {

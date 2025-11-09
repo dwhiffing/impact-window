@@ -1,6 +1,7 @@
-import { ENEMY_STATS, EnemyType } from '../constants'
+import { ENEMY_STATS } from '../constants'
 import { Game } from '../scenes/Game'
 import { darkenColor } from '../darkenColor'
+import { EnemyType } from '../types'
 
 export class Enemy extends Phaser.GameObjects.Container {
   declare scene: Game
@@ -97,9 +98,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.kill()
       this.scene.addEnergy(this.stats.energyOnKill)
     } else {
-      this.setAlpha(0.5)
       this.spinTween?.destroy()
-      this.scene.time.delayedCall(200, () => this.setAlpha(1).setActive(true))
       this.scene.time.delayedCall(Phaser.Math.Between(500, 1000), () =>
         this.move(),
       )

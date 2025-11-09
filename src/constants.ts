@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser'
+import { EnemyType, EnemyStats } from './types'
 export const PARTICLE_CONFIG = {
   lifespan: { min: 100, max: 1200 },
   scale: { min: 0.2, max: 1.5 },
@@ -27,17 +28,6 @@ export const MAX_THUMB_SIZE = 100
 export const ENEMY_SIZE = 10
 export const ENEMY_COLOR = 0xff4444
 export const MULTI_SPEED_BOOST = 30
-
-export type EnemyType = 'grunt' | 'heavy'
-
-export type EnemyStats = {
-  color: number
-  speed: number
-  size: number
-  health: number
-  energyOnKill: number
-  speedBoost: number
-}
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   grunt: {
