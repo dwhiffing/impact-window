@@ -10,6 +10,7 @@ import {
   PLAYER_LAUNCH_COOLDOWN_MS,
   PLAYER_FULL_LAUNCH_SPEED,
   PLAYER_WEAK_LAUNCH_SPEED,
+  TRAIL_CONFIG,
 } from '../constants'
 import { darkenColor } from '../darkenColor'
 import { Game } from '../scenes/Game'
@@ -22,11 +23,13 @@ export class Player extends Phaser.GameObjects.Container {
   public lastLaunch = 0
   private base: Phaser.GameObjects.Arc
   private cooldownArc: Phaser.GameObjects.Graphics
+  public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
+  public renderTexture: Phaser.GameObjects.RenderTexture
 
   constructor(scene: Game) {
     super(scene)
 
-    const { centerX, centerY } = scene.cameras.main
+    const { centerX, centerY, width, height } = scene.cameras.main
     this.setPosition(centerX, centerY)
     this.base = scene.add
       .arc(0, 0, PLAYER_SIZE, 0, 360, true, PLAYER_COLOR)
@@ -48,6 +51,11 @@ export class Player extends Phaser.GameObjects.Container {
       .setOffset(-PLAYER_SIZE, -PLAYER_SIZE)
 
     this.body.onWorldBounds = true
+
+    this.trailParticles = this.scene.add.particles(0, 0, 'circle', TRAIL_CONFIG)
+    this.trailParticles.startFollow(this)
+    this.renderTexture = this.scene.add.renderTexture(0, 0, width, height)
+    this.renderTexture.setOrigin(0, 0).setDepth(-2).setAlpha(0.3)
   }
 
   update() {
@@ -91,13 +99,14 @@ export class Player extends Phaser.GameObjects.Container {
     const t = Phaser.Math.Clamp(this.speed / PLAYER_MAX_SPEED, 0, 1)
     const eased = 1 - Math.pow(1 - t, 1.2)
     const scale = Phaser.Math.Linear(0.01, 0.2, eased)
-    this.scene.trailParticles.setParticleTint(this.color)
-    this.scene.trailParticles.setParticleScale(scale)
+    this.trailParticles.setParticleTint(this.color)
+    this.trailParticles.setParticleScale(scale)
     if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
-      this.scene.trailParticles.setActive(true)
+      this.trailParticles.setActive(true)
     } else {
       this.scene.state.patch({ multi: 0 })
     }
+    this.renderTexture.clear().draw(this.trailParticles, 0, 0)
   }
 
   kill = () => {
@@ -124,9 +133,9 @@ export class Player extends Phaser.GameObjects.Container {
     const toAdd = Math.min(impulse, availableToMax)
     if (toAdd <= 0) return
     this.pendingImpulse += toAdd
-    this.scene.trailParticles.setParticleTint(ENEMY_COLOR)
+    this.trailParticles.setParticleTint(ENEMY_COLOR)
     this.scene.time.delayedCall(Phaser.Math.Between(50, 100), () => {
-      this.scene.trailParticles.setParticleTint(this.color)
+      this.trailParticles.setParticleTint(this.color)
     })
   }
 

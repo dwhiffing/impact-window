@@ -9,7 +9,6 @@ import {
   MULTI_SPEED_BOOST,
   PARTICLE_CONFIG,
   PLAYER_MIN_CRUSH_SPEED,
-  TRAIL_CONFIG,
   MAX_ENERGY,
   ENERGY_RECHARGE_RATE,
   WEAK_LAUNCH_COST,
@@ -30,10 +29,8 @@ export class Game extends Scene {
   public enemies: Phaser.Physics.Arcade.Group
   public line: Line
   public particles: Phaser.GameObjects.Particles.ParticleEmitter
-  public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
-  public renderTexture: Phaser.GameObjects.RenderTexture
   public state: HookState<IState>
-  private energyMeterFill: Phaser.GameObjects.Rectangle
+  public energyMeterFill: Phaser.GameObjects.Rectangle
 
   constructor() {
     super('Game')
@@ -47,10 +44,6 @@ export class Game extends Scene {
     this.line = new Line(this)
     this.enemies = this.physics.add.group({ classType: Enemy })
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
-    this.trailParticles = this.add.particles(0, 0, 'circle', TRAIL_CONFIG)
-    this.trailParticles.startFollow(this.player)
-    this.renderTexture = this.add.renderTexture(0, 0, width, height)
-    this.renderTexture.setOrigin(0, 0).setDepth(-2).setAlpha(0.3)
 
     const scoreText = this.add.text(x, height - 12, '0').setOrigin(0.5, 1)
     const multiText = this.add.text(x, height - 30, '').setOrigin(0.5, 1)
@@ -98,7 +91,6 @@ export class Game extends Scene {
     const dt = _delta / 1000
 
     this.player.update()
-    this.renderTexture.clear().draw(this.trailParticles, 0, 0)
 
     const rate = this.time.timeScale < 1 ? -1 : ENERGY_RECHARGE_RATE
     this.state.patch((s) => ({
@@ -187,7 +179,7 @@ export class Game extends Scene {
     this.time.timeScale = scale
     this.tweens.timeScale = scale
     this.particles.timeScale = scale
-    this.trailParticles.timeScale = scale
+    this.player.trailParticles.timeScale = scale
     this.physics.world.timeScale = 1 / scale
   }
 
