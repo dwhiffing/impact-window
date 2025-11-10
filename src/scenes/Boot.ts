@@ -41,6 +41,7 @@ export class Boot extends Scene {
     this.load.audio('launch-weak', 'hit-2.mp3')
     this.load.audio('launch-full', 'powerup.mp3')
     this.load.audio('launch-ready', 'beep.mp3')
+    this.load.audio('combo-countdown', 'coin-hit.mp3')
     this.load.audio('launch-start-drag', 'beep-2.mp3')
 
     this.add
