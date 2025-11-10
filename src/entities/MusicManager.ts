@@ -36,10 +36,15 @@ export class MusicManager {
   playNext = (forcePlay = false) => {
     if (this.currentMusic && !forcePlay) return
     const key = this.musicKeys[this.trackIndex]
-    this.currentMusic = this.scene.sound.add(key, {
-      volume: this.mode === 0 ? 0.3 : 0,
-    })
+    this.currentMusic = this.scene.sound.add(key, { volume: 0 })
 
+    if (this.mode === 0) {
+      this.scene.tweens.add({
+        targets: this.currentMusic,
+        volume: 0.3,
+        duration: 250,
+      })
+    }
     // @ts-ignore
     window.currentMusic = this.currentMusic
 
