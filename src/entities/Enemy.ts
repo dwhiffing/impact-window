@@ -59,12 +59,12 @@ export class Enemy extends Phaser.GameObjects.Container {
       alpha: 0.7,
       duration: 500,
       onComplete: () => {
+        this.scene.time.delayedCall(750, this.move)
         t.add({
           targets: this.indicator,
           alpha: 0,
-          delay: 1000,
+          delay: 750,
           duration: 500,
-          onComplete: this.move,
         })
       },
     })
