@@ -33,7 +33,8 @@ export class MusicManager {
       (this.currentMusic as any).volume = this.mode === 0 ? 0.3 : 0
   }
 
-  playNext = () => {
+  playNext = (forcePlay = false) => {
+    if (this.currentMusic && !forcePlay) return
     const key = this.musicKeys[this.trackIndex]
     this.currentMusic = this.scene.sound.add(key, {
       volume: this.mode === 0 ? 0.3 : 0,
@@ -45,7 +46,7 @@ export class MusicManager {
     this.currentMusic.play()
     this.currentMusic.once('complete', () => {
       this.trackIndex = (this.trackIndex + 1) % this.musicKeys.length
-      this.playNext()
+      this.playNext(true)
     })
   }
 }
