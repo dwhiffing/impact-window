@@ -24,7 +24,7 @@ export const MULTI_SPEED_BOOST = 30
 
 export const COMBO_EXPIRE_MS = 1200
 export const MAX_ENERGY = 100
-export const ENERGY_RECHARGE_RATE = 12
+export const ENERGY_RECHARGE_RATE = 8
 export const WEAK_LAUNCH_COST = 12
 export const FULL_LAUNCH_COST = 40
 
@@ -50,6 +50,16 @@ export const POWERUPS: PowerupDef[] = [
 ]
 
 export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
+  grunt: {
+    color: 0xff4444,
+    speed: 60,
+    size: 7,
+    health: 1,
+    energyOnKill: 2,
+    speedBoost: 60,
+    score: 10,
+    damage: 1,
+  },
   fast: {
     color: 0x44ff44,
     speed: 440,
@@ -68,16 +78,6 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     energyOnKill: 12,
     speedBoost: 200,
     score: 100,
-    damage: 1,
-  },
-  grunt: {
-    color: 0xff4444,
-    speed: 60,
-    size: 7,
-    health: 1,
-    energyOnKill: 3,
-    speedBoost: 120,
-    score: 10,
     damage: 1,
   },
   heavy: {
@@ -114,11 +114,32 @@ export const PARTICLE_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitter
   }
 
 export const WAVES: Record<string, EnemyType[]> = {
+  nothing: [],
   one_grunt: ['grunt'],
-  heavies: ['heavy', 'grunt', 'grunt'],
+  three_grunt: ['grunt', 'grunt', 'grunt'],
+  one_heavy: ['heavy'],
+  three_heavy: ['heavy', 'heavy', 'heavy'],
+  one_fast: ['fast'],
+  one_boss: ['boss'],
+  three_boss: ['boss', 'boss', 'boss'],
 }
 
 export const WAVES_BY_SCORE: Array<{ score: number; pool: string[] }> = [
-  { score: 0, pool: ['one_grunt'] },
-  { score: 5000, pool: ['one_grunt', 'heavies'] },
+  {
+    score: 0,
+    pool: ['one_grunt', 'one_grunt', 'one_grunt', 'nothing', 'three_grunt'],
+  },
+  {
+    score: 1000,
+    pool: [
+      'one_grunt',
+      'one_grunt',
+      'one_grunt',
+      'nothing',
+      'nothing',
+      'one_heavy',
+      'one_heavy',
+      'three_grunt',
+    ],
+  },
 ]
