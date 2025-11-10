@@ -172,7 +172,7 @@ export class Game extends Scene {
 
   onHitEnemy = (enemy: Enemy) => {
     enemy.damage()
-    this.player.makeInvulnerable(100)
+    this.player.makeInvulnerable(200)
     this.player.addImpulse(
       enemy.stats.speedBoost + MULTI_SPEED_BOOST * this.state.get().multi,
     )

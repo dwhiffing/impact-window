@@ -2,6 +2,7 @@ import * as Phaser from 'phaser'
 import { EnemyType, EnemyStats, PowerupDef } from './types'
 
 export const LOCAL_STORAGE_KEY = 'impact-window-score'
+export const INITIAL_SCORE = 0
 
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
@@ -22,7 +23,6 @@ export const MAX_THUMB_SIZE = 120
 export const ENEMY_COLOR = 0xff4444
 export const MULTI_SPEED_BOOST = 30
 
-export const INITIAL_SCORE = 0
 export const COMBO_EXPIRE_MS = 1300
 export const COMBO_COUNTDOWN_MS = 250
 export const MAX_ENERGY = 100
@@ -58,28 +58,8 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     size: 7,
     health: 1,
     energyOnKill: 5,
-    speedBoost: 60,
+    speedBoost: 50,
     score: 10,
-    damage: 1,
-  },
-  fast: {
-    color: 0x44ff44,
-    speed: 400,
-    size: 4,
-    health: 1,
-    energyOnKill: 3,
-    speedBoost: 120,
-    score: 100,
-    damage: 0,
-  },
-  boss: {
-    color: 0xff44ff,
-    speed: 20,
-    size: 16,
-    health: 6,
-    energyOnKill: 12,
-    speedBoost: 200,
-    score: 100,
     damage: 1,
   },
   heavy: {
@@ -88,8 +68,28 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     size: 12,
     health: 2,
     energyOnKill: 6,
-    speedBoost: 200,
-    score: 30,
+    speedBoost: 100,
+    score: 15,
+    damage: 1,
+  },
+  fast: {
+    color: 0x44ff44,
+    speed: 400,
+    size: 4,
+    health: 1,
+    energyOnKill: 3,
+    speedBoost: 50,
+    score: 25,
+    damage: 0,
+  },
+  boss: {
+    color: 0xff44ff,
+    speed: 20,
+    size: 16,
+    health: 6,
+    energyOnKill: 12,
+    speedBoost: 100,
+    score: 50,
     damage: 1,
   },
 }
@@ -122,10 +122,11 @@ export const WAVES: Record<string, EnemyType[]> = {
   three_grunt: new Array(3).fill('grunt'),
   four_grunt: new Array(4).fill('grunt'),
   one_heavy: new Array(1).fill('heavy'),
+  two_heavy: new Array(2).fill('heavy'),
   three_heavy: new Array(3).fill('heavy'),
   one_fast: new Array(1).fill('fast'),
   one_boss: new Array(1).fill('boss'),
-  three_boss: new Array(3).fill('boss'),
+  two_boss: new Array(2).fill('boss'),
 }
 
 export const WAVES_BY_SCORE: Array<{ score: number; pool: string[] }> = [
@@ -134,18 +135,51 @@ export const WAVES_BY_SCORE: Array<{ score: number; pool: string[] }> = [
     pool: [
       ...new Array(2).fill('one_grunt'),
       ...new Array(2).fill('nothing'),
-      ...new Array(1).fill('two_grunt'),
+      ...new Array(2).fill('two_grunt'),
     ],
   },
   {
     score: 500,
     pool: [
-      ...new Array(2).fill('one_grunt'),
+      ...new Array(3).fill('one_grunt'),
       ...new Array(2).fill('two_grunt'),
-      ...new Array(5).fill('nothing'),
+      ...new Array(1).fill('nothing'),
+      ...new Array(2).fill('one_heavy'),
+      ...new Array(1).fill('one_fast'),
+    ],
+  },
+  {
+    score: 1500,
+    pool: [
+      ...new Array(3).fill('one_grunt'),
+      ...new Array(2).fill('two_grunt'),
+      ...new Array(1).fill('nothing'),
       ...new Array(3).fill('one_heavy'),
-      ...new Array(1).fill('fast'),
-      ...new Array(1).fill('three_grunt'),
+      ...new Array(1).fill('one_fast'),
+    ],
+  },
+  {
+    score: 3000,
+    pool: [
+      ...new Array(4).fill('one_grunt'),
+      ...new Array(1).fill('two_grunt'),
+      ...new Array(2).fill('nothing'),
+      ...new Array(2).fill('one_heavy'),
+      ...new Array(2).fill('two_heavy'),
+      ...new Array(1).fill('one_fast'),
+      ...new Array(1).fill('one_boss'),
+    ],
+  },
+  {
+    score: 5000,
+    pool: [
+      ...new Array(4).fill('one_grunt'),
+      ...new Array(1).fill('two_grunt'),
+      ...new Array(2).fill('nothing'),
+      ...new Array(2).fill('one_heavy'),
+      ...new Array(2).fill('two_heavy'),
+      ...new Array(1).fill('one_fast'),
+      ...new Array(2).fill('one_boss'),
     ],
   },
 ]
