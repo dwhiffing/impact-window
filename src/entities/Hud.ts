@@ -6,6 +6,7 @@ import {
 } from '../constants'
 import { Game } from '../scenes/Game'
 
+const ALPHA = 0.6
 export class Hud {
   scene: Game
   public comboArc: Phaser.GameObjects.Graphics
@@ -19,7 +20,7 @@ export class Hud {
     const scoreText = this.scene.add
       .bitmapText(x, height - 2, 'pixel-dan', '0')
       .setOrigin(0.5, 1)
-      .setAlpha(0.7)
+      .setAlpha(ALPHA)
       .setFontSize(10)
       .setDepth(9)
     this.multiText = this.scene.add
@@ -27,7 +28,7 @@ export class Hud {
       .setOrigin(0.5, 1)
       .setFontSize(5)
       .setDepth(9)
-      .setAlpha(0.7)
+      .setAlpha(ALPHA)
 
     this.scene.add
       .rectangle(0, height, width, 3, 0x222222)
@@ -69,7 +70,7 @@ export class Hud {
 
       this.comboArc
         .clear()
-        .lineStyle(1, 0xffffff, 0.7)
+        .lineStyle(1, 0xffffff, ALPHA)
         .arc(x, y, R, start, end, false)
         .strokePath()
 
