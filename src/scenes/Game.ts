@@ -22,6 +22,7 @@ import {
   WAVES,
   WAVES_BY_SCORE,
   LOCAL_STORAGE_KEY,
+  INITIAL_SCORE,
 } from '../constants'
 
 export class Game extends Scene {
@@ -43,7 +44,7 @@ export class Game extends Scene {
     this.cameras.main.fadeFrom(800, 0, 0, 0)
 
     this.state = withGlobalState<IState>(this, 'global')
-    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY, lastKillAt: -1 })
+    this.state.set({ score: INITIAL_SCORE, multi: 0, energy: MAX_ENERGY, lastKillAt: -1 }) // prettier-ignore
 
     this.player = new Player(this)
     this.line = new Line(this)
