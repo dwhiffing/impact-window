@@ -49,6 +49,7 @@ export class Game extends Scene {
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
     this.hud = new Hud(this)
     this.musicManager = new MusicManager(this)
+    this.musicManager.playNext()
 
     this.input.on('pointerdown', this.onDown)
     this.input.on('pointermove', this.onDrag)

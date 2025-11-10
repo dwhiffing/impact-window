@@ -1,5 +1,6 @@
 import { Scene } from 'phaser'
 import { LOCAL_STORAGE_KEY } from '../constants'
+import { MusicManager } from '../entities/MusicManager'
 
 export class Menu extends Scene {
   constructor() {
@@ -38,6 +39,7 @@ export class Menu extends Scene {
     })
 
     this.input.once('pointerdown', this.startGame)
+    new MusicManager(this)
   }
 
   startGame = () => {

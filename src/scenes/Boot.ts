@@ -59,7 +59,6 @@ export class Boot extends Scene {
   }
 
   create() {
-    this.sound.volume = 0.3
     this.scene.start('Menu')
   }
 }
