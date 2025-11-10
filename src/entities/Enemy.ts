@@ -54,17 +54,20 @@ export class Enemy extends Phaser.GameObjects.Container {
       .setFillStyle(this.stats.color)
       .setRadius(3)
 
+    const FADE_TIME = 400
+    const DELAY_TIME = 750
+
     t.add({
       targets: this.indicator,
       alpha: 0.7,
-      duration: 500,
+      duration: FADE_TIME,
       onComplete: () => {
-        this.scene.time.delayedCall(750, this.move)
+        this.scene.time.delayedCall(DELAY_TIME, this.move)
         t.add({
           targets: this.indicator,
           alpha: 0,
-          delay: 750,
-          duration: 500,
+          delay: DELAY_TIME,
+          duration: FADE_TIME,
         })
       },
     })
