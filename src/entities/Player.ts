@@ -159,6 +159,7 @@ export class Player extends Phaser.GameObjects.Container {
 
   kill = () => {
     this.setActive(false).setAlpha(0).setVisible(false)
+    this.trailParticles.stop()
     this.scene.particles
       .setParticleTint(this.color)
       .emitParticleAt(this.x, this.y, 50)
