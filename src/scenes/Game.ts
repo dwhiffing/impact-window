@@ -63,6 +63,7 @@ export class Game extends Scene {
     this.physics.add.overlap(this.player, this.powerup, this.player.onPickupPowerup) // prettier-ignore
     this.time.addEvent({ delay: SPAWN_RATE, loop: true, callback: this.spawnWave }) // prettier-ignore
 
+    this.wavePool = []
     this.spawnWave()
   }
 
