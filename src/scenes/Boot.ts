@@ -27,6 +27,22 @@ export class Boot extends Scene {
     this.load.audio('game-music-3', 'game3.mp3')
     this.load.audio('game-music-4', 'game4.mp3')
 
+    this.load.audio('start-game', 'start-game.mp3')
+    this.load.audio('game-over', 'game-over.mp3')
+    this.load.audio('explode-2', 'explode-2.mp3')
+
+    this.load.audio('enemy-hit', 'hit-1.mp3')
+    this.load.audio('enemy-kill', 'explode-2.mp3')
+    this.load.audio('wall-hit', 'hit-3.mp3')
+    this.load.audio('powerup-pickup', 'powerup-2.mp3')
+    this.load.audio('powerup-expire', 'error.mp3')
+    this.load.audio('combo-expire', 'error.mp3')
+
+    this.load.audio('launch-weak', 'hit-2.mp3')
+    this.load.audio('launch-full', 'powerup.mp3')
+    this.load.audio('launch-ready', 'beep.mp3')
+    this.load.audio('launch-start-drag', 'beep-2.mp3')
+
     this.add
       .graphics()
       .fillStyle(0xffffff, 1)
@@ -43,6 +59,7 @@ export class Boot extends Scene {
   }
 
   create() {
+    this.sound.volume = 0.3
     this.scene.start('Menu')
   }
 }

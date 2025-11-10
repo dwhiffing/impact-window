@@ -28,6 +28,7 @@ export class Player extends Phaser.GameObjects.Container {
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
   private activePowerup?: { def: PowerupDef; until: number }
+  private isOnCooldown = false
 
   constructor(scene: Game) {
     super(scene)
@@ -101,6 +102,7 @@ export class Player extends Phaser.GameObjects.Container {
 
     this.scene.time.delayedCall(def.duration, () => {
       if (this.activePowerup?.def === def) {
+        this.scene.sound.play('powerup-expire')
         this.activePowerup = undefined
       }
     })
@@ -109,6 +111,11 @@ export class Player extends Phaser.GameObjects.Container {
   updateCooldownTimer = () => {
     const progress =
       (this.scene.time.now - this.lastLaunch) / PLAYER_LAUNCH_COOLDOWN_MS
+
+    if (this.isOnCooldown && progress >= 1) {
+      this.scene.sound.play('launch-ready', { volume: 0.5 })
+      this.isOnCooldown = false
+    }
 
     const startDeg = -90
     const endDeg = startDeg + Math.floor(360 * progress)
@@ -142,7 +149,10 @@ export class Player extends Phaser.GameObjects.Container {
     if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
       this.trailParticles.setActive(true)
     } else {
-      this.scene.state.patch({ multi: 0 })
+      if (this.scene.state.get().multi > 0) {
+        this.scene.sound.play('combo-expire', { volume: 0.5 })
+        this.scene.state.patch({ multi: 0 })
+      }
     }
     this.renderTexture.clear().draw(this.trailParticles, 0, 0)
   }
@@ -177,12 +187,17 @@ export class Player extends Phaser.GameObjects.Container {
     if (!this.active) return
 
     this.lastLaunch = this.scene.time.now
+    this.isOnCooldown = true
     const dx = -(p.x - p.downX)
     const dy = -(p.y - p.downY)
     const angle = Math.atan2(dy, dx)
     const vx = Math.cos(angle) * this.speed
     const vy = Math.sin(angle) * this.speed
     this.body.setVelocity(vx, vy)
+
+    this.scene.sound.play(fullLaunch ? 'launch-full' : 'launch-weak', {
+      volume: 0.75,
+    })
     this.pendingImpulse += fullLaunch
       ? PLAYER_FULL_LAUNCH_SPEED
       : PLAYER_WEAK_LAUNCH_SPEED
@@ -193,6 +208,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.scene.particles
       .setParticleTint(this.color)
       .emitParticleAt(this.x, this.y, 2)
+    this.scene.sound.play('wall-hit', { volume: 0.5 })
   }
 
   makeInvulnerable(ms: number) {

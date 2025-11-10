@@ -90,5 +90,6 @@ export class Powerup extends Phaser.GameObjects.Container {
     this.scene.particles
       .setParticleTint(this.def.color)
       .emitParticleAt(this.x, this.y, 24)
+    this.scene.sound.play('powerup-pickup')
   }
 }

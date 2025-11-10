@@ -50,6 +50,7 @@ export class Game extends Scene {
     this.hud = new Hud(this)
     this.musicManager = new MusicManager(this)
 
+    this.input.on('pointerdown', this.onDown)
     this.input.on('pointermove', this.onDrag)
     this.input.on('pointerup', this.onRelease)
     this.input.on('gameout', this.onRelease)
@@ -82,11 +83,11 @@ export class Game extends Scene {
     this.enemies
       .get()
       .spawn(
-        Phaser.Math.Between(0, 3) === 0
+        Phaser.Math.Between(0, 10) === 0
           ? 'boss'
-          : Phaser.Math.Between(0, 3) === 0
+          : Phaser.Math.Between(0, 10) === 0
           ? 'fast'
-          : Phaser.Math.Between(0, 3) === 0
+          : Phaser.Math.Between(0, 10) === 0
           ? 'heavy'
           : 'grunt',
       )
@@ -106,6 +107,10 @@ export class Game extends Scene {
 
       this.setTimeScale(0.2)
     }
+  }
+
+  onDown = () => {
+    this.sound.play('launch-start-drag', { volume: 0.5 })
   }
 
   onDrag = () => {
@@ -156,6 +161,7 @@ export class Game extends Scene {
   }
 
   onGameOver = () => {
+    this.sound.play('game-over', { volume: 0.75 })
     this.player.kill()
     this.cameras.main
       .flash(50, 255, 255, 255)

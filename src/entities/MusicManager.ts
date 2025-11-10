@@ -26,16 +26,11 @@ export class MusicManager {
     if (this.trackIndex === null) return
 
     const key = this.musicKeys[this.trackIndex]
-    const music = this.scene.sound.add(key, { loop: false, volume: 0 })
+    const music = this.scene.sound.add(key, { loop: false, volume: 0.3 })
     music.play()
     this.currentMusic = music
     // @ts-ignore
     window.currentMusic = music
-    this.scene.tweens.add({
-      targets: music,
-      volume: { from: 0, to: 0.5 },
-      duration: 500,
-    })
 
     music.once('complete', this.onTrackComplete)
   }
@@ -43,23 +38,11 @@ export class MusicManager {
   private onTrackComplete = () => {
     this.trackPlays += 1
 
-    const LOOP_COUNT = 3
-    if (this.trackPlays < LOOP_COUNT) {
-      this.currentMusic?.once('complete', this.onTrackComplete).play()
-      return
-    }
-
     if (!this.currentMusic) return
-    this.scene.tweens.add({
-      targets: this.currentMusic,
-      volume: { from: 0.5, to: 0 },
-      duration: 500,
-      onComplete: () => {
-        this.currentMusic?.stop()
-        this.trackIndex = (this.trackIndex + 1) % this.musicKeys.length
-        this.trackPlays = 0
-        this.playCurrentTrack()
-      },
-    })
+
+    this.currentMusic?.stop()
+    this.trackIndex = (this.trackIndex + 1) % this.musicKeys.length
+    this.trackPlays = 0
+    this.playCurrentTrack()
   }
 }

@@ -98,6 +98,7 @@ export class Enemy extends Phaser.GameObjects.Container {
       this.kill()
       this.scene.addEnergy(this.stats.energyOnKill)
     } else {
+      this.scene.sound.play('enemy-hit', { volume: 0.5 })
       this.setAlpha(0.5)
       const a = this.scene.time.delayedCall(100, () => this.setAlpha(1))
       this.spinTween?.destroy()
@@ -108,6 +109,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   kill = () => {
+    this.scene.sound.play('enemy-kill', { volume: 0.75 })
     this.setActive(false).setAlpha(0).setVisible(false)
     this.body.setVelocity(0)
     this.scene.particles

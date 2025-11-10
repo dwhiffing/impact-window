@@ -41,6 +41,8 @@ export class Menu extends Scene {
   }
 
   startGame = () => {
+    this.sound.play('start-game')
+    this.sound.play('explode-2', { volume: 0.5 })
     this.cameras.main
       .flash(50, 255, 255, 255)
       .shake(300, 0.01)
