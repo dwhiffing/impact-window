@@ -111,3 +111,13 @@ export const PARTICLE_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitter
     rotate: { start: 0, end: 1200 },
     quantity: 0,
   }
+
+export const WAVES: Record<string, EnemyType[]> = {
+  one_grunt: ['grunt'],
+  heavies: ['heavy', 'grunt', 'grunt'],
+}
+
+export const WAVES_BY_SCORE: Array<{ score: number; pool: string[] }> = [
+  { score: 0, pool: ['one_grunt'] },
+  { score: 5000, pool: ['one_grunt', 'heavies'] },
+]

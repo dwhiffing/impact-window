@@ -19,6 +19,8 @@ import {
   FULL_LAUNCH_COST,
   SPAWN_RATE,
   POWERUPS,
+  WAVES,
+  WAVES_BY_SCORE,
   LOCAL_STORAGE_KEY,
 } from '../constants'
 
@@ -31,6 +33,7 @@ export class Game extends Scene {
   public powerup?: Powerup
   public state: HookState<IState>
   public musicManager: MusicManager
+  private wavePool: string[] = []
 
   constructor() {
     super('Game')
@@ -58,9 +61,9 @@ export class Game extends Scene {
     this.physics.world.on('worldbounds', this.onWorldBounds)
     this.physics.add.collider(this.player, this.enemies, undefined, this.onCollide) // prettier-ignore
     this.physics.add.overlap(this.player, this.powerup, this.player.onPickupPowerup) // prettier-ignore
-    this.time.addEvent({ delay: SPAWN_RATE, loop: true, callback: this.spawnEnemy }) // prettier-ignore
+    this.time.addEvent({ delay: SPAWN_RATE, loop: true, callback: this.spawnWave }) // prettier-ignore
 
-    this.spawnEnemy()
+    this.spawnWave()
   }
 
   spawnPowerup = (x: number, y: number) => {
@@ -80,18 +83,23 @@ export class Game extends Scene {
     this.powerup.spawnAt(x, y, chosen)
   }
 
-  spawnEnemy = () =>
-    this.enemies
-      .get()
-      .spawn(
-        Phaser.Math.Between(0, 10) === 0
-          ? 'boss'
-          : Phaser.Math.Between(0, 10) === 0
-          ? 'fast'
-          : Phaser.Math.Between(0, 10) === 0
-          ? 'heavy'
-          : 'grunt',
-      )
+  spawnWave = () => {
+    if (this.wavePool.length === 0) {
+      const score = this.state.get().score || 0
+      let best: { score: number; pool: string[] } | null = null
+      for (const entry of WAVES_BY_SCORE) {
+        if (score >= entry.score && (!best || entry.score > best.score))
+          best = entry
+      }
+
+      const pool = best ? best.pool.slice() : Object.keys(WAVES)
+      this.wavePool = Phaser.Math.RND.shuffle(pool)
+    }
+
+    const waveKey = this.wavePool.shift() as string
+    const wave = WAVES[waveKey] ?? []
+    for (const t of wave) this.enemies.get().spawn(t)
+  }
 
   update = (_time: number, _delta: number): void => {
     const dt = _delta / 1000
