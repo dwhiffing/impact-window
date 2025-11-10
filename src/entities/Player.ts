@@ -113,7 +113,7 @@ export class Player extends Phaser.GameObjects.Container {
       (this.scene.time.now - this.lastLaunch) / PLAYER_LAUNCH_COOLDOWN_MS
 
     if (this.isOnCooldown && progress >= 1) {
-      this.scene.sound.play('launch-ready', { volume: 0.4 })
+      this.scene.sound.play('launch-ready', { volume: 0.25 })
       this.isOnCooldown = false
     }
 
