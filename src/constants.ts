@@ -33,21 +33,21 @@ export const FULL_LAUNCH_COST = 40
 export const POWERUPS: PowerupDef[] = [
   {
     name: 'damage',
-    color: 0x66ccff,
-    duration: 6000,
-    rarity: 10,
+    color: 0xff4444,
+    duration: 5000,
+    rarity: 1,
   },
   {
     name: 'speed',
-    color: 0xffcc33,
+    color: 0x44ff44,
     duration: 5000,
-    rarity: 7,
+    rarity: 1,
   },
   {
     name: 'energize',
-    color: 0x99ff66,
-    duration: 4000,
-    rarity: 12,
+    color: 0xff44ff,
+    duration: 5000,
+    rarity: 1,
   },
 ]
 
@@ -64,7 +64,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
   },
   fast: {
     color: 0x44ff44,
-    speed: 440,
+    speed: 400,
     size: 4,
     health: 1,
     energyOnKill: 3,

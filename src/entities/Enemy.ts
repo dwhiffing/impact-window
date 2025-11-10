@@ -97,7 +97,10 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   damage = () => {
-    if (--this.health <= 0) {
+    const damage =
+      this.scene.player.activePowerup?.def.name === 'damage' ? 3 : 1
+    this.health -= damage
+    if (this.health <= 0) {
       this.kill()
       this.scene.addEnergy(this.stats.energyOnKill)
     } else {

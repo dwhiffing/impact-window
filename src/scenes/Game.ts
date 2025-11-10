@@ -108,7 +108,11 @@ export class Game extends Scene {
 
     this.player.update()
 
-    const rate = this.time.timeScale < 1 ? -1 : ENERGY_RECHARGE_RATE
+    const baseRate =
+      this.player.activePowerup?.def.name === 'energize'
+        ? ENERGY_RECHARGE_RATE * 10
+        : ENERGY_RECHARGE_RATE
+    const rate = this.time.timeScale < 1 ? -1 : baseRate
     this.state.patch((s) => ({
       energy: Math.min(s.energy + rate * dt, MAX_ENERGY),
     }))
@@ -154,7 +158,9 @@ export class Game extends Scene {
     const enemy = e as Enemy
     if (!this.player.active || !enemy.active) return false
 
-    if (this.player.speed >= PLAYER_MIN_CRUSH_SPEED) {
+    const hasPowerup = this.player.activePowerup?.def!!
+    const minSpeed = hasPowerup ? 0 : PLAYER_MIN_CRUSH_SPEED
+    if (this.player.speed >= minSpeed) {
       if (enemy.alpha === 1) this.onHitEnemy(enemy)
     } else {
       if (enemy.stats.damage === 0) return false

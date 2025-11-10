@@ -27,7 +27,7 @@ export class Player extends Phaser.GameObjects.Container {
   private powerupArc: Phaser.GameObjects.Graphics
   public trailParticles: Phaser.GameObjects.Particles.ParticleEmitter
   public renderTexture: Phaser.GameObjects.RenderTexture
-  private activePowerup?: { def: PowerupDef; until: number }
+  public activePowerup?: { def: PowerupDef; until: number }
   private isOnCooldown = false
 
   constructor(scene: Game) {
@@ -52,7 +52,6 @@ export class Player extends Phaser.GameObjects.Container {
       .setCollideWorldBounds(true)
       .setBounce(1)
       .setDamping(true)
-      .setDrag(PLAYER_DRAG)
       .setOffset(-PLAYER_SIZE, -PLAYER_SIZE)
 
     this.body.onWorldBounds = true
@@ -64,6 +63,9 @@ export class Player extends Phaser.GameObjects.Container {
   }
 
   update() {
+    this.body.setDrag(
+      this.activePowerup?.def.name === 'speed' ? 0.6 : PLAYER_DRAG,
+    )
     this.base.setFillStyle(this.color)
     this.updateCooldownTimer()
     this.updatePowerupArc()
@@ -98,7 +100,6 @@ export class Player extends Phaser.GameObjects.Container {
     const def = power.def
     power.pickup()
     this.activePowerup = { def, until: this.scene.time.now + def.duration }
-    // TODO: add powerup effects
 
     this.scene.time.delayedCall(def.duration, () => {
       if (this.activePowerup?.def === def) {
@@ -146,7 +147,9 @@ export class Player extends Phaser.GameObjects.Container {
     const eased = 1 - Math.pow(1 - t, 1.2)
     const scale = Phaser.Math.Linear(0.01, 0.2, eased)
     this.trailParticles.setParticleScale(scale)
-    if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
+    const hasPowerup = this.activePowerup?.def!!
+    const minSpeed = hasPowerup ? 0 : PLAYER_MIN_CRUSH_SPEED
+    if (this.speed > minSpeed) {
       this.trailParticles.setActive(true)
     } else {
     }
@@ -162,9 +165,9 @@ export class Player extends Phaser.GameObjects.Container {
   }
 
   get color(): number {
-    return this.speed > PLAYER_MIN_CRUSH_SPEED
-      ? PLAYER_CRUSH_COLOR
-      : PLAYER_COLOR
+    const hasPowerup = this.activePowerup?.def!!
+    const minSpeed = hasPowerup ? 0 : PLAYER_MIN_CRUSH_SPEED
+    return this.speed > minSpeed ? PLAYER_CRUSH_COLOR : PLAYER_COLOR
   }
 
   get speed(): number {
