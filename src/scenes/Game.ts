@@ -5,6 +5,7 @@ import { Player } from '../entities/Player'
 import { Line } from '../entities/Line'
 import { Hud } from '../entities/Hud'
 import { Powerup } from '../entities/Powerup'
+import { MusicManager } from '../entities/MusicManager'
 import { IState } from '../types'
 import {
   DEAD_ZONE_SIZE,
@@ -29,6 +30,7 @@ export class Game extends Scene {
   public particles: Phaser.GameObjects.Particles.ParticleEmitter
   public powerup?: Powerup
   public state: HookState<IState>
+  public musicManager: MusicManager
 
   constructor() {
     super('Game')
@@ -46,6 +48,7 @@ export class Game extends Scene {
     this.powerup = new Powerup(this)
     this.particles = this.add.particles(0, 0, 'particle', PARTICLE_CONFIG)
     this.hud = new Hud(this)
+    this.musicManager = new MusicManager(this)
 
     this.input.on('pointermove', this.onDrag)
     this.input.on('pointerup', this.onRelease)

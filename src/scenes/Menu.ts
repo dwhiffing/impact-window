@@ -37,13 +37,15 @@ export class Menu extends Scene {
       ease: 'Sine.easeInOut',
     })
 
-    this.input.on('pointerdown', () => {
-      this.cameras.main
-        .flash(50, 255, 255, 255)
-        .shake(300, 0.01)
-        .fade(800, 0, 0, 0, true, (_: any, p: number) => {
-          if (p === 1) this.scene.start('Game')
-        })
-    })
+    this.input.once('pointerdown', this.startGame)
+  }
+
+  startGame = () => {
+    this.cameras.main
+      .flash(50, 255, 255, 255)
+      .shake(300, 0.01)
+      .fade(800, 0, 0, 0, true, (_: any, p: number) => {
+        if (p === 1) this.scene.start('Game')
+      })
   }
 }

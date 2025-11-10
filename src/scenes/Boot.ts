@@ -20,6 +20,13 @@ export class Boot extends Scene {
     this.load.setPath('assets/')
     this.load.bitmapFont('pixel-dan', 'pixel-dan.png', 'pixel-dan.xml')
     this.load.image('title', 'title.png')
+
+    this.load.setPath('assets/audio')
+    this.load.audio('game-music-1', 'game1.mp3')
+    this.load.audio('game-music-2', 'game2.mp3')
+    this.load.audio('game-music-3', 'game3.mp3')
+    this.load.audio('game-music-4', 'game4.mp3')
+
     this.add
       .graphics()
       .fillStyle(0xffffff, 1)
