@@ -66,6 +66,7 @@ export class Game extends Scene {
 
     this.wavePool = []
     this.spawnWave()
+    this.setTimeScale(1)
   }
 
   spawnPowerup = (x: number, y: number) => {
