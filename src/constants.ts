@@ -6,14 +6,14 @@ export const LOCAL_STORAGE_KEY = 'impact-window-score'
 export const PLAYER_COLOR = 0x00ffcc
 export const PLAYER_CRUSH_COLOR = 0xffff00
 export const PLAYER_MAX_SPEED = 800
-export const PLAYER_DRAG = 0.15
+export const PLAYER_DRAG = 0.125
 export const PLAYER_SIZE = 13
 export const PLAYER_FULL_LAUNCH_SPEED = 450
-export const PLAYER_WEAK_LAUNCH_SPEED = 200
+export const PLAYER_WEAK_LAUNCH_SPEED = 175
 export const PLAYER_ACCELERATION = 40
 export const PLAYER_MIN_CRUSH_SPEED = 90
-export const PLAYER_LAUNCH_COOLDOWN_MS = 750
-export const SPAWN_RATE = 1200
+export const PLAYER_LAUNCH_COOLDOWN_MS = 500
+export const SPAWN_RATE = 1000
 
 export const DEAD_ZONE_SIZE = 10
 export const NUDGE_ZONE_SIZE = 50
@@ -26,7 +26,7 @@ export const COMBO_EXPIRE_MS = 1300
 export const COMBO_COUNTDOWN_MS = 250
 export const MAX_ENERGY = 100
 export const ENERGY_RECHARGE_RATE = 8
-export const WEAK_LAUNCH_COST = 12
+export const WEAK_LAUNCH_COST = 10
 export const FULL_LAUNCH_COST = 40
 
 export const POWERUPS: PowerupDef[] = [
@@ -56,7 +56,7 @@ export const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
     speed: 60,
     size: 7,
     health: 1,
-    energyOnKill: 2,
+    energyOnKill: 5,
     speedBoost: 60,
     score: 10,
     damage: 1,
@@ -116,31 +116,35 @@ export const PARTICLE_CONFIG: Phaser.Types.GameObjects.Particles.ParticleEmitter
 
 export const WAVES: Record<string, EnemyType[]> = {
   nothing: [],
-  one_grunt: ['grunt'],
-  three_grunt: ['grunt', 'grunt', 'grunt'],
-  one_heavy: ['heavy'],
-  three_heavy: ['heavy', 'heavy', 'heavy'],
-  one_fast: ['fast'],
-  one_boss: ['boss'],
-  three_boss: ['boss', 'boss', 'boss'],
+  one_grunt: new Array(1).fill('grunt'),
+  two_grunt: new Array(2).fill('grunt'),
+  three_grunt: new Array(3).fill('grunt'),
+  four_grunt: new Array(4).fill('grunt'),
+  one_heavy: new Array(1).fill('heavy'),
+  three_heavy: new Array(3).fill('heavy'),
+  one_fast: new Array(1).fill('fast'),
+  one_boss: new Array(1).fill('boss'),
+  three_boss: new Array(3).fill('boss'),
 }
 
 export const WAVES_BY_SCORE: Array<{ score: number; pool: string[] }> = [
   {
     score: 0,
-    pool: ['one_grunt', 'one_grunt', 'one_grunt', 'nothing', 'three_grunt'],
+    pool: [
+      ...new Array(2).fill('one_grunt'),
+      ...new Array(2).fill('nothing'),
+      ...new Array(1).fill('two_grunt'),
+    ],
   },
   {
-    score: 1000,
+    score: 500,
     pool: [
-      'one_grunt',
-      'one_grunt',
-      'one_grunt',
-      'nothing',
-      'nothing',
-      'one_heavy',
-      'one_heavy',
-      'three_grunt',
+      ...new Array(2).fill('one_grunt'),
+      ...new Array(2).fill('two_grunt'),
+      ...new Array(5).fill('nothing'),
+      ...new Array(3).fill('one_heavy'),
+      ...new Array(1).fill('fast'),
+      ...new Array(1).fill('three_grunt'),
     ],
   },
 ]
