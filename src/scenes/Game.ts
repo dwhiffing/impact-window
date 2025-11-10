@@ -43,7 +43,7 @@ export class Game extends Scene {
     this.cameras.main.fadeFrom(800, 0, 0, 0)
 
     this.state = withGlobalState<IState>(this, 'global')
-    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY })
+    this.state.set({ score: 0, multi: 0, energy: MAX_ENERGY, lastKillAt: -1 })
 
     this.player = new Player(this)
     this.line = new Line(this)

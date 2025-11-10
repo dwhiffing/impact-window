@@ -125,6 +125,7 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.scene.state.patch((s) => ({
       score: s.score + (s.multi + 1) * this.stats.score,
       multi: s.multi + 1,
+      lastKillAt: this.scene.time.now,
     }))
 
     this.scene.player.trailParticles.setParticleTint(this.stats.color)

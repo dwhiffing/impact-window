@@ -113,7 +113,7 @@ export class Player extends Phaser.GameObjects.Container {
       (this.scene.time.now - this.lastLaunch) / PLAYER_LAUNCH_COOLDOWN_MS
 
     if (this.isOnCooldown && progress >= 1) {
-      this.scene.sound.play('launch-ready', { volume: 0.5 })
+      this.scene.sound.play('launch-ready', { volume: 0.4 })
       this.isOnCooldown = false
     }
 
@@ -149,10 +149,6 @@ export class Player extends Phaser.GameObjects.Container {
     if (this.speed > PLAYER_MIN_CRUSH_SPEED) {
       this.trailParticles.setActive(true)
     } else {
-      if (this.scene.state.get().multi > 0) {
-        this.scene.sound.play('combo-expire', { volume: 0.5 })
-        this.scene.state.patch({ multi: 0 })
-      }
     }
     this.renderTexture.clear().draw(this.trailParticles, 0, 0)
   }

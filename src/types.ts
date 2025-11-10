@@ -2,6 +2,7 @@ export type IState = {
   score: number
   multi: number
   energy: number
+  lastKillAt: number
 }
 
 export type PowerupDef = {

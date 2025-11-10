@@ -22,6 +22,7 @@ export const MAX_THUMB_SIZE = 120
 export const ENEMY_COLOR = 0xff4444
 export const MULTI_SPEED_BOOST = 30
 
+export const COMBO_EXPIRE_MS = 1200
 export const MAX_ENERGY = 100
 export const ENERGY_RECHARGE_RATE = 12
 export const WEAK_LAUNCH_COST = 12
